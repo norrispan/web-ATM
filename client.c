@@ -8,3 +8,7 @@
 #include <semaphore.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netinet/in.h> 
+#include <sys/wait.h> 
+#include <errno.h> 
+#include <arpa/inet.h>
