@@ -17,7 +17,7 @@
 #include "data.h"
 
 
-#define PORT 54321
+
 
 int main(int argc, char *argv[]){
 	
@@ -25,7 +25,7 @@ int main(int argc, char *argv[]){
 	struct hostent *he;
 	struct sockaddr_in their_addr; 
 	
-	if (argc != 2) {
+	if (argc != 3) {
 		fprintf(stderr,"usage: client hostname\n");
 		exit(1);
 	}
@@ -41,7 +41,7 @@ int main(int argc, char *argv[]){
 	}
 
 	their_addr.sin_family = AF_INET;      /* host byte order */
-	their_addr.sin_port = htons(PORT);    /* short, network byte order */
+	their_addr.sin_port = htons(atoi(argv[2]));    /* short, network byte order */
 	their_addr.sin_addr = *((struct in_addr *)he->h_addr);
 	bzero(&(their_addr.sin_zero), 8);     /* zero the rest of the struct */
 
@@ -50,7 +50,9 @@ int main(int argc, char *argv[]){
 		exit(1);
 	}
 
-
+	while(1){
+		
+	}
 
 	return 0;
 }

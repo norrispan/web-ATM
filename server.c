@@ -15,7 +15,7 @@
 #include <arpa/inet.h>
 #include "data.h"
 
-#define MYPORT 54321 
+#define DEFAULT_PORT 12345 
 #define BACKLOG 10 
 
 int main(int argc, char *argv[]){	
@@ -24,7 +24,7 @@ int main(int argc, char *argv[]){
 	struct sockaddr_in my_addr;    // my address information 
 	struct sockaddr_in their_addr; // connector's address information 
 	socklen_t sin_size;
-	
+	short myPort = DEFAULT_PORT;
 	
 	
 	
@@ -36,6 +36,14 @@ int main(int argc, char *argv[]){
 	}
 	get_authentication(authDetails);
 	
+	if (argc > 2) {
+		fprintf(stderr,"usage: argument error\n");
+		exit(1);
+	}
+	
+	if (argv[1] != NULL) {
+		myPort = atoi(argv[1]);
+	}
 	
 	// generate the socket 
 	if ((sock_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
@@ -45,7 +53,7 @@ int main(int argc, char *argv[]){
 
 	// generate the end point 
 	my_addr.sin_family = AF_INET;         // host byte order
-	my_addr.sin_port = htons(MYPORT);     // short, network byte order 
+	my_addr.sin_port = htons(myPort);     // short, network byte order 
 	my_addr.sin_addr.s_addr = INADDR_ANY; // auto-fill with my IP 
 
 	// bind the socket to the end point 
@@ -61,8 +69,17 @@ int main(int argc, char *argv[]){
 	}
 	printf("server starts listnening ...\n");
 	
+	while(1){
+		
+		if ((new_fd = accept(sock_fd, (struct sockaddr *)&their_addr, &sin_size)) == -1) {
+			perror("accept");
+			continue;
+		}
+		printf("server: got connection from %s\n", inet_ntoa(their_addr.sin_addr));
+		
+	}
 	
-	//authentication
 	
+		
 	return 0;
 }
