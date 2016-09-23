@@ -4,7 +4,7 @@
 /* 
 
 	Author: PAN Ningyuan 
-	Date: September/2016 
+	Date: September 2016 
 
 */
 
@@ -17,12 +17,12 @@
 
 // data type that holds value of authentication details
 typedef struct login{
-	char* userName;
+	char *username;
 	int pin;
-	int clientNo;
+	int client_no;
 } login_t;
 
 // functions read data from txt files
-void get_authentication(login_t auDetails[]);
+void Get_Authentication(login_t au_details[]);
 
 #endif

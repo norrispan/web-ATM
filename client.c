@@ -16,14 +16,38 @@
 #include <netdb.h> 
 #include "data.h"
 
+/* 
 
+	Author: PAN Ningyuan 
+	Date: September 2016 
 
+*/
+
+void Get_Login(login_t my_details, char *pin_buf){
+	printf("\n\nYou are required to logon with your registered Username and PIN\n\n");
+	printf("Please enter your username -->");
+	gets(my_details.username);
+	printf("Please enter your pin -->");
+	my_details.pin= atoi(gets(pin_buf));
+	printf("\n%s  %d ", my_details.username, my_details.pin);
+}
+
+void Welcome(){
+	printf("========================================");
+	printf("\n\n\n\nWelcome to the Online ATM System\n\n\n\n");
+	printf("========================================\n\n");
+}
 
 int main(int argc, char *argv[]){
 	
 	int sockfd, numbytes;  
 	struct hostent *he;
 	struct sockaddr_in their_addr; 
+	
+	login_t my_details;
+	char *pin_buf = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+	my_details.username = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+
 	
 	if (argc != 3) {
 		fprintf(stderr,"usage: client hostname\n");
@@ -49,10 +73,18 @@ int main(int argc, char *argv[]){
 		perror("connect");
 		exit(1);
 	}
+	
+	
+	Welcome();
+	
+	Get_Login(my_details, pin_buf);
 
-	while(1){
-		
-	}
+	
+
+	
+
+	
+	
 
 	return 0;
 }

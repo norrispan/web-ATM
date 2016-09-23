@@ -3,15 +3,23 @@
 #include <string.h>
 #include "data.h"
 
-void get_authentication(login_t auDetails[]){
+/* 
+
+	Author: PAN Ningyuan 
+	Date: September 2016 
+
+*/
+
+
+void Get_Authentication(login_t au_details[]){
 	FILE* file = fopen("./data/Authentication.txt","r");	
 	if(!file){
 		printf("can't open file\n");
 	}
 	
 	char* line[AUTH_LINE_NUM + 1];
-	char* pinBuf = malloc(DATA_BUF_SIZE * sizeof(char));         
-	char* clientBuf = malloc(DATA_BUF_SIZE * sizeof(char));
+	char* pin_buf = malloc(DATA_BUF_SIZE * sizeof(char));         
+	char* client_buf = malloc(DATA_BUF_SIZE * sizeof(char));
 	
 	int j = 0;
 	
@@ -20,20 +28,20 @@ void get_authentication(login_t auDetails[]){
 		fgets(line[i], LINE_BUF_SIZE * sizeof(char), file);            
 	
 		if(i > 0){
-			auDetails[j].userName = malloc(DATA_BUF_SIZE * sizeof(char));	
-			sscanf(line[i], "%s", auDetails[j].userName);
-			sscanf(line[i], "%*s%s", pinBuf);
-			auDetails[j].pin = atoi(pinBuf);			
-			sscanf(line[i], "%*s%*s%s", clientBuf);
-			auDetails[j].clientNo = atoi(clientBuf);
+			au_details[j].username = malloc(DATA_BUF_SIZE * sizeof(char));	
+			sscanf(line[i], "%s", au_details[j].username);
+			sscanf(line[i], "%*s%s", pin_buf);
+			au_details[j].pin = atoi(pin_buf);			
+			sscanf(line[i], "%*s%*s%s", client_buf);
+			au_details[j].client_no = atoi(client_buf);
 			j++;
 		}
 		free(line[i]);
 		line[i] = NULL;
 	}
-	free(pinBuf);
-	pinBuf = NULL;
-	free(clientBuf);
-	clientBuf = NULL;
+	free(pin_buf);
+	pin_buf = NULL;
+	free(client_buf);
+	client_buf = NULL;
 	fclose(file);
 }
