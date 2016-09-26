@@ -15,11 +15,12 @@
 #define LINE_BUF_SIZE 50        
 #define DATA_BUF_SIZE 10
 
+
 // data type that holds value of authentication details
 typedef struct login{
 	char *username;
-	int pin;
-	int client_no;
+	char *pin;
+	char *client_no;
 } login_t;
 
 // functions read data from txt files

@@ -46,16 +46,20 @@ int main(int argc, char *argv[]){
 	socklen_t sin_size;
 	short my_port = DEFAULT_PORT;
 	
+	
 	// variables for 
 	login_t auth_details[AUTH_LINE_NUM];
-	for(int i = 0; i < AUTH_LINE_NUM ; i++){
-		auth_details[i].username = "C";
-		auth_details[i].pin = 1;
-		auth_details[i].client_no = 1;
-	}
+
 	
 	Get_Authentication(auth_details);
 	Argument_Check(argc, argv, my_port);
+	
+/* 	//test function	
+	for(int i = 0; i < AUTH_LINE_NUM; i++){
+		printf("%s       %s          %s\n", auth_details[i].username, auth_details[i].pin, auth_details[i].client_no);
+	} 
+	
+*/
 	
 	
 	// generate the socket 
@@ -82,15 +86,16 @@ int main(int argc, char *argv[]){
 	}
 	printf("server starts listnening ...\n");
 	
-	while(1){
-		
+	
+	while(1){	
 		if ((new_fd = accept(sock_fd, (struct sockaddr *)&their_addr, &sin_size)) == -1) {
 			perror("accept");
 			continue;
 		}
 		printf("server: got connection from %s\n", inet_ntoa(their_addr.sin_addr));
-		
+	
 	}
+	
 	
 	
 		

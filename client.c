@@ -23,13 +23,13 @@
 
 */
 
-void Get_Login(login_t my_details, char *pin_buf){
+void Get_Login(login_t my_details){
 	printf("\n\nYou are required to logon with your registered Username and PIN\n\n");
 	printf("Please enter your username -->");
 	gets(my_details.username);
 	printf("Please enter your pin -->");
-	my_details.pin= atoi(gets(pin_buf));
-	printf("\n%s  %d ", my_details.username, my_details.pin);
+	gets(my_details.pin);
+	printf("\n%s  %s ", my_details.username, my_details.pin);
 }
 
 void Welcome(){
@@ -45,8 +45,9 @@ int main(int argc, char *argv[]){
 	struct sockaddr_in their_addr; 
 	
 	login_t my_details;
-	char *pin_buf = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	my_details.username = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+	my_details.pin = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+	my_details.client_no = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 
 	
 	if (argc != 3) {
@@ -77,9 +78,9 @@ int main(int argc, char *argv[]){
 	
 	Welcome();
 	
-	Get_Login(my_details, pin_buf);
+	Get_Login(my_details);
 
-	
+
 
 	
 

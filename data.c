@@ -18,8 +18,6 @@ void Get_Authentication(login_t au_details[]){
 	}
 	
 	char* line[AUTH_LINE_NUM + 1];
-	char* pin_buf = malloc(DATA_BUF_SIZE * sizeof(char));         
-	char* client_buf = malloc(DATA_BUF_SIZE * sizeof(char));
 	
 	int j = 0;
 	
@@ -28,20 +26,16 @@ void Get_Authentication(login_t au_details[]){
 		fgets(line[i], LINE_BUF_SIZE * sizeof(char), file);            
 	
 		if(i > 0){
-			au_details[j].username = malloc(DATA_BUF_SIZE * sizeof(char));	
+			au_details[j].username = malloc(DATA_BUF_SIZE * sizeof(char));
+			au_details[j].pin = malloc(DATA_BUF_SIZE * sizeof(char));
+			au_details[j].client_no = malloc(DATA_BUF_SIZE * sizeof(char));
 			sscanf(line[i], "%s", au_details[j].username);
-			sscanf(line[i], "%*s%s", pin_buf);
-			au_details[j].pin = atoi(pin_buf);			
-			sscanf(line[i], "%*s%*s%s", client_buf);
-			au_details[j].client_no = atoi(client_buf);
+			sscanf(line[i], "%*s%s", au_details[j].pin);		
+			sscanf(line[i], "%*s%*s%s", au_details[j].client_no);
 			j++;
 		}
 		free(line[i]);
 		line[i] = NULL;
 	}
-	free(pin_buf);
-	pin_buf = NULL;
-	free(client_buf);
-	client_buf = NULL;
 	fclose(file);
 }
