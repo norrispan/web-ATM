@@ -1,6 +1,0 @@
-Exception: STATUS_ACCESS_VIOLATION at eip=61143B5D
-eax=00000000 ebx=0061ABE8 ecx=00000001 edx=0000007B esi=0061982E edi=61192CD0
-ebp=00000001 esp=00619670 program=F:\cygwin\home\asgn\client.exe, pid 10244, thread main
-cs=0023 ds=002B es=002B fs=0053 gs=002B ss=002B
-Stack trace:
-Frame     Function  Args

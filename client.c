@@ -23,6 +23,15 @@
 
 */
 
+void Send_Login(login_t my_details, int sockfd){
+	if (send(sockfd, my_details.username, DATA_BUF_SIZE * sizeof(char), 0) == -1){
+		perror("send");
+	}
+	if (send(sockfd, my_details.pin, DATA_BUF_SIZE * sizeof(char), 0) == -1){
+		perror("send");
+	}
+}
+
 void Get_Login(login_t my_details){
 	printf("\n\nYou are required to logon with your registered Username and PIN\n\n");
 	printf("Please enter your username -->");
@@ -31,6 +40,9 @@ void Get_Login(login_t my_details){
 	gets(my_details.pin);
 	printf("\n%s  %s ", my_details.username, my_details.pin);
 }
+
+
+
 
 void Welcome(){
 	printf("========================================");
@@ -45,9 +57,12 @@ int main(int argc, char *argv[]){
 	struct sockaddr_in their_addr; 
 	
 	login_t my_details;
+	char *login_status = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	my_details.username = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	my_details.pin = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	my_details.client_no = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+	
+	
 
 	
 	if (argc != 3) {
@@ -79,12 +94,21 @@ int main(int argc, char *argv[]){
 	Welcome();
 	
 	Get_Login(my_details);
+	
+	
+	Send_Login(my_details, sockfd);
 
+	
+	
+	if ((numbytes = recv(sockfd, login_status, sizeof(char), 0)) == -1){
+			perror("recv");
+		}
 
 
 	
-
+	printf("\n%d     %s", numbytes, login_status);
 	
+
 	
 
 	return 0;

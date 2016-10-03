@@ -49,10 +49,17 @@ int main(int argc, char *argv[]){
 	
 	// variables for 
 	login_t auth_details[AUTH_LINE_NUM];
-
+	login_t login_detail;
+	login_detail.username = malloc(DATA_BUF_SIZE * sizeof(char));
+	login_detail.pin = malloc(DATA_BUF_SIZE * sizeof(char));
+	login_detail.client_no = malloc(DATA_BUF_SIZE * sizeof(char));
+	
+	bool valid = false;
 	
 	Get_Authentication(auth_details);
 	Argument_Check(argc, argv, my_port);
+	char* login_s = "login success";
+	char* login_f = "login fail";
 	
 /* 	//test function	
 	for(int i = 0; i < AUTH_LINE_NUM; i++){
@@ -86,16 +93,59 @@ int main(int argc, char *argv[]){
 	}
 	printf("server starts listnening ...\n");
 	
-	
-	while(1){	
+
+		//while(1){
 		if ((new_fd = accept(sock_fd, (struct sockaddr *)&their_addr, &sin_size)) == -1) {
 			perror("accept");
-			continue;
+			//continue;
 		}
 		printf("server: got connection from %s\n", inet_ntoa(their_addr.sin_addr));
+		
+		
+		
+		
+		if ((numbytes = recv(new_fd, login_detail.username, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
+			perror("recv");
+		}	
+		if ((numbytes = recv(new_fd, login_detail.pin, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
+			perror("recv");
+		}
+
+		
+			
+		for(int i = 0; i < AUTH_LINE_NUM; i++){
+			if(strcmp(login_detail.username, auth_details[i].username) == 0 && strcmp(login_detail.pin, auth_details[i].pin) == 0){
+				valid = true;
+				break;
+			}
+		}
+		
+		if(valid){
+			if (send(new_fd, "1", sizeof(char), 0) == -1){
+				perror("send");
+			}
+			printf("\nlogin success");
+		}
+		else{
+			if (send(new_fd, "0", sizeof(char), 0) == -1){
+				perror("send");
+			}
+			printf("\nlogin fail");
+		}
+		
+			
+		//}
+			
+			
+		
+			
+		
+		
+		
+		
 	
-	}
-	
+
+
 	
 	
 		
