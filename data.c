@@ -11,31 +11,64 @@
 */
 
 
-void Get_Authentication(login_t au_details[]){
+
+
+
+
+//void Load_Authentication(login_t au_details[], int which_line){
+
+	
+	
+
+//}
+
+int main(){
+	char *username = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
+	char *pin = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
+	char *client_no = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
+	char* line = (char*)malloc(LINE_BUF_SIZE * sizeof(char));
+	int start_line = 1;
+	//int increament = 0;
 	FILE* file = fopen("./data/Authentication.txt","r");	
 	if(!file){
 		printf("can't open file\n");
 	}
 	
-	char* line[AUTH_LINE_NUM + 1];
-	
-	int j = 0;
-	
-	for(int i = 0; i < AUTH_LINE_NUM + 1; i++){
-		line[i] = (char*)malloc(LINE_BUF_SIZE * sizeof(char));  //read a single line
-		fgets(line[i], LINE_BUF_SIZE * sizeof(char), file);            
-	
-		if(i > 0){
-			au_details[j].username = malloc(DATA_BUF_SIZE * sizeof(char));
-			au_details[j].pin = malloc(DATA_BUF_SIZE * sizeof(char));
-			au_details[j].client_no = malloc(DATA_BUF_SIZE * sizeof(char));
-			sscanf(line[i], "%s", au_details[j].username);
-			sscanf(line[i], "%*s%s", au_details[j].pin);		
-			sscanf(line[i], "%*s%*s%s", au_details[j].client_no);
-			j++;
+	int current_line = 0;
+	if(!file){
+		printf("read file error");
+	}
+	else{
+		while(!feof(file)){  
+			printf("\n%d %d", current_line, start_line);
+			if(current_line == start_line ){
+				
+				fgets(line, LINE_BUF_SIZE * sizeof(char),file);
+				
+				sscanf(line, "%s", username);
+				sscanf(line, "%*s%s", pin);		
+				sscanf(line, "%*s%*s%s", client_no);
+				printf("\n%s     %s     %s", username, pin, client_no);
+				start_line ++;
+			}
+			else{
+			fgets(line, LINE_BUF_SIZE * sizeof(char),file);
+			}
+			current_line ++;
 		}
-		free(line[i]);
-		line[i] = NULL;
 	}
 	fclose(file);
+	
+
+	
+	free(username);
+	free(pin);
+	free(client_no);
+	free(line);
+	line = NULL;
+	username = NULL;
+	pin = NULL;
+	client_no = NULL;
+	return 0;
+	
 }

@@ -38,7 +38,6 @@ void Get_Login(login_t my_details){
 	gets(my_details.username);
 	printf("Please enter your pin -->");
 	gets(my_details.pin);
-	printf("\n%s  %s ", my_details.username, my_details.pin);
 }
 
 
@@ -103,10 +102,17 @@ int main(int argc, char *argv[]){
 	if ((numbytes = recv(sockfd, login_status, sizeof(char), 0)) == -1){
 			perror("recv");
 		}
-
+	if(atoi(login_status)){
+		printf("\nlogin success");
+		
+	}
+	else{
+		printf("\nYou entered either an incorrect Username or PIN - disconecting");
+		exit(0);
+	}
 
 	
-	printf("\n%d     %s", numbytes, login_status);
+
 	
 
 	

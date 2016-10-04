@@ -58,8 +58,7 @@ int main(int argc, char *argv[]){
 	
 	Get_Authentication(auth_details);
 	Argument_Check(argc, argv, my_port);
-	char* login_s = "login success";
-	char* login_f = "login fail";
+	
 	
 /* 	//test function	
 	for(int i = 0; i < AUTH_LINE_NUM; i++){
@@ -125,28 +124,19 @@ int main(int argc, char *argv[]){
 				perror("send");
 			}
 			printf("\nlogin success");
+			
 		}
 		else{
 			if (send(new_fd, "0", sizeof(char), 0) == -1){
 				perror("send");
 			}
 			printf("\nlogin fail");
+			close(new_fd);
 		}
 		
 			
 		//}
 			
-			
-		
-			
-		
-		
-		
-		
-	
-
-
-	
 	
 		
 	return 0;
