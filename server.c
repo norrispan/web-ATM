@@ -35,7 +35,7 @@ void Argument_Check(int argc, char *argv[], short my_port){
 		fprintf(stderr,"usage: argument error\n");
 		exit(1);
 	}
-}
+} 
 
 
 int main(int argc, char *argv[]){	
@@ -47,27 +47,21 @@ int main(int argc, char *argv[]){
 	short my_port = DEFAULT_PORT;
 	
 	
-	// variables for 
-	login_t auth_details[AUTH_LINE_NUM];
-	login_t login_detail;
-	login_detail.username = malloc(DATA_BUF_SIZE * sizeof(char));
-	login_detail.pin = malloc(DATA_BUF_SIZE * sizeof(char));
-	login_detail.client_no = malloc(DATA_BUF_SIZE * sizeof(char));
+	// variables for login
+	user_node_t *user_list = NULL;
+	user_t login_input;
+	login_input.username = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+	login_input.pin = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+	login_input.client_no = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	
 	bool valid = false;
 	
-	Get_Authentication(auth_details);
+	user_list = Get_authentication();
 	Argument_Check(argc, argv, my_port);
 	
-	
-/* 	//test function	
-	for(int i = 0; i < AUTH_LINE_NUM; i++){
-		printf("%s       %s          %s\n", auth_details[i].username, auth_details[i].pin, auth_details[i].client_no);
-	} 
-	
-*/
-	
-	
+
+
+
 	// generate the socket 
 	if ((sock_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
 		perror("socket");
@@ -103,17 +97,16 @@ int main(int argc, char *argv[]){
 		
 		
 		
-		if ((numbytes = recv(new_fd, login_detail.username, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
+		if ((numbytes = recv(new_fd, login_input.username, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
 			perror("recv");
 		}	
-		if ((numbytes = recv(new_fd, login_detail.pin, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
+		if ((numbytes = recv(new_fd, login_input.pin, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
 			perror("recv");
 		}
 
 		
-			
-		for(int i = 0; i < AUTH_LINE_NUM; i++){
-			if(strcmp(login_detail.username, auth_details[i].username) == 0 && strcmp(login_detail.pin, auth_details[i].pin) == 0){
+		for( ; user_list != NULL; user_list = user_list->next) {
+			if(strcmp(login_input.username, user_list->login->username) == 0 && strcmp(login_input.pin, user_list->login->pin) == 0){
 				valid = true;
 				break;
 			}
@@ -135,7 +128,8 @@ int main(int argc, char *argv[]){
 		}
 		
 			
-		//}
+		//} 
+		
 			
 	
 		

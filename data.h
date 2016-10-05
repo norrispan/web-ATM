@@ -11,7 +11,7 @@
 
 
 // Useful macros for reading data from txt files
-#define AUTH_LINE_NUM 10        
+       
 #define LINE_BUF_SIZE 50        
 #define DATA_BUF_SIZE 10
 #define LOGIN_FAIL "0"
@@ -19,13 +19,22 @@
 
 
 // data type that holds value of authentication details
-typedef struct login{
+typedef struct user user_t;
+struct user{
 	char *username;
 	char *pin;
 	char *client_no;
-} login_t;
+};
 
-// functions read data from txt files
-void Get_Authentication(login_t au_details[]);
+
+typedef struct user_node user_node_t;
+
+struct user_node{
+    user_t *login;
+    user_node_t *next;
+};
+
+user_node_t *Get_authentication();
+
 
 #endif
