@@ -34,7 +34,23 @@ struct user_node{
     user_node_t *next;
 };
 
-user_node_t *Get_authentication();
+
+typedef struct request request_t;
+struct request {
+    int number;             /* number of the request                  */
+    struct request* next;   /* pointer to next request, NULL if none. */
+};
+
+typedef struct thread_data thread_data_t;
+struct thread_data{
+	int numbytes; 
+	int new_fd; 
+	user_node_t *user_list;
+	user_t login_input;
+};
+
+
+user_node_t *get_authentication();
 
 
 #endif

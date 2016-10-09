@@ -13,7 +13,7 @@
 
 
 
-user_node_t *Get_authentication(){
+user_node_t *get_authentication(){
 	
 	user_node_t *user_list = NULL;
 

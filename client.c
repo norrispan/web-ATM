@@ -23,7 +23,23 @@
 
 */
 
-void Send_Login(user_t my_login, int sockfd){
+void authentication(int numbytes, int sockfd){
+	char *login_status = (char *)malloc(sizeof(char));
+	if ((numbytes = recv(sockfd, login_status, sizeof(char), 0)) == -1){
+			perror("recv");
+		}
+	if(atoi(login_status)){
+		printf("\nlogin success");
+			
+	}
+	else{
+		printf("\nYou entered either an incorrect Username or PIN - disconecting");
+		exit(0);
+	}
+}
+
+
+void send_login(user_t my_login, int sockfd){
 	if (send(sockfd, my_login.username, DATA_BUF_SIZE * sizeof(char), 0) == -1){
 		perror("send");
 	}
@@ -32,7 +48,7 @@ void Send_Login(user_t my_login, int sockfd){
 	}
 }
 
-void Get_Login(user_t my_login){
+void get_login(user_t my_login){
 	printf("\n\nYou are required to logon with your registered Username and PIN\n\n");
 	printf("Please enter your username -->");
 	gets(my_login.username);
@@ -43,7 +59,7 @@ void Get_Login(user_t my_login){
 
 
 
-void Welcome(){
+void welcome(){
 	printf("========================================");
 	printf("\n\n\n\nWelcome to the Online ATM System\n\n\n\n");
 	printf("========================================\n\n");
@@ -64,7 +80,7 @@ int main(int argc, char *argv[]){
 	
 	
 	
-	char *login_status = (char *)malloc(sizeof(char));
+	
 	
 	if (argc != 3) {
 		fprintf(stderr,"usage: client hostname\n");
@@ -92,29 +108,10 @@ int main(int argc, char *argv[]){
 	}
 	
 	
-	Welcome();
-	
-	Get_Login(my_login);
-	
-	
-	Send_Login(my_login, sockfd);
-
-	
-	
-	if ((numbytes = recv(sockfd, login_status, sizeof(char), 0)) == -1){
-			perror("recv");
-		}
-	if(atoi(login_status)){
-		printf("\nlogin success");
-		
-	}
-	else{
-		printf("\nYou entered either an incorrect Username or PIN - disconecting");
-		exit(0);
-	}
-
-	
-
+	welcome();
+	get_login(my_login);
+	send_login(my_login, sockfd);
+	authentication(numbytes, sockfd);
 	
 
 	
