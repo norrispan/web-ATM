@@ -77,7 +77,9 @@ void authentication(int numbytes, int new_fd, user_node_t *user_list, user_t log
 }
 
 
-void client_handler(thread_data_t *data){
+void *client_handler(void *ptr){
+	thread_data_t *data;            
+    data = (thread_data_t *) ptr;
 	authentication(data->numbytes, data->new_fd, data->user_list, data->login_input);
 }
 
@@ -90,18 +92,18 @@ int main(int argc, char *argv[]){
 	socklen_t sin_size;
 	short my_port = DEFAULT_PORT;
 	
-	
+	pthread_t thread_id;
+	thread_data_t data;
 	
 	// variables for login ========================================================================
-	thread_data_t *data = malloc(sizeof(thread_data_t));
-	data->user_list = NULL;
-	data->login_input.username = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
-	data->login_input.pin = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
-	data->login_input.client_no = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+	data.user_list = NULL;
+	data.login_input.username = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+	data.login_input.pin = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+	data.login_input.client_no = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	
 	
 //-------------------------------------------------------------------------------------------------	
-	data->user_list = get_authentication();
+	data.user_list = get_authentication();
 	argument_check(argc, argv, my_port);
 //=================================================================================================	
 
@@ -128,11 +130,28 @@ int main(int argc, char *argv[]){
 		exit(1);
 	}
 	printf("server starts listnening ...\n");
-	if ((data->new_fd = accept(sock_fd, (struct sockaddr *)&their_addr, &sin_size)) == -1) {
+	
+	
+	
+	
+	
+	
+	if ((data.new_fd = accept(sock_fd, (struct sockaddr *)&their_addr, &sin_size)) == -1) {
 		perror("accept");
 		//continue;
 	}
 	printf("server: got connection from %s\n", inet_ntoa(their_addr.sin_addr));
+		
+		
+		
+		
+		
+		
+	if (pthread_create (&thread_id, NULL, (void *(*)(void*))client_handler, (void *) &data) !=0) {
+         printf("ERROR creating thread");
+         return EXIT_FAILURE;
+    }	
+	pthread_join(thread_id, NULL);
 		
 //=============        connection          =========================================================		
 /*
@@ -169,7 +188,7 @@ int main(int argc, char *argv[]){
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 //-------------        authentication      ---------------------------------------------------------		
-	client_handler(data);
+
 //=============        authentication      =========================================================		
 			
 				

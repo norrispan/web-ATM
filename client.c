@@ -72,6 +72,7 @@ int main(int argc, char *argv[]){
 	struct sockaddr_in their_addr; 
 	
 	
+	
 	user_t my_login;
 	
 	my_login.username = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
