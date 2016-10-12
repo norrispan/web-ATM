@@ -30,13 +30,76 @@
 pthread_mutex_t request_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
 pthread_cond_t  got_request   = PTHREAD_COND_INITIALIZER;
 
-int pending_requests = 0;   /* number of pending requests, initially none */
+int pending_requests = 0;   
 
-request_t* requests = NULL;     /* head of linked list of requests. */
-request_t* last_request = NULL; /* pointer to last request.         */
-
+request_t* requests = NULL;     
+request_t* last_request = NULL; 
 
 user_node_t *user_list;
+
+
+void add_request(int request_num, int new_fd, pthread_mutex_t *p_mutex, pthread_cond_t *p_cond_var){
+    int rc;                         
+    request_t* a_request;     
+
+    a_request = (request_t*)malloc(sizeof(request_t));
+	a_request->data = (thread_data_t*)malloc(sizeof(thread_data_t));
+    if (!a_request) { 
+        fprintf(stderr, "add_request: out of memory\n");
+        exit(1);
+    }
+	a_request->request_num = request_num;
+    a_request->data->new_fd = new_fd;
+    a_request->next = NULL;
+    
+    rc = pthread_mutex_lock(p_mutex);
+
+    if (pending_requests == 0) { 
+        requests = a_request;
+        last_request = a_request;
+    }
+    else {
+        last_request->next = a_request;
+        last_request = a_request;
+    }
+    
+    pending_requests++;
+    rc = pthread_mutex_unlock(p_mutex);
+    rc = pthread_cond_signal(p_cond_var);
+}
+
+request_t* get_request(pthread_mutex_t* p_mutex){
+    int rc;                         
+    request_t* a_request;      
+
+    rc = pthread_mutex_lock(p_mutex);
+
+    if (pending_requests > 0) {
+        a_request = requests;
+        requests = a_request->next;
+        if (requests == NULL) { 
+            last_request = NULL;
+        }
+        
+        pending_requests--;
+    }
+    else { 
+        a_request = NULL;
+    }
+
+    rc = pthread_mutex_unlock(p_mutex);
+
+    return a_request;
+}
+
+
+
+
+
+
+
+
+
 
 
 void argument_check(int argc, char *argv[], short my_port){
@@ -94,7 +157,7 @@ void *client_handler(void *ptr){
 
 int main(int argc, char *argv[]){	
 	// variables for client server ===============================================================
-	int sock_fd;  						// listen on sock_fd, new connection on new_fd 
+	int sock_fd, new_fd;  						// listen on sock_fd, new connection on new_fd 
 	struct sockaddr_in my_addr;    		// my address information 
 	struct sockaddr_in their_addr; 		// connector's address information 
 	socklen_t sin_size;
@@ -139,21 +202,21 @@ int main(int argc, char *argv[]){
 	
 	while(1){
 	
-		if ((data.new_fd = accept(sock_fd, (struct sockaddr *)&their_addr, &sin_size)) == -1) {
+		if ((new_fd = accept(sock_fd, (struct sockaddr *)&their_addr, &sin_size)) == -1) {
 			perror("accept");
 			continue;
 		}
 		printf("server: got connection from %s\n", inet_ntoa(their_addr.sin_addr));
 		
-		
-	
+		add_request(pending_requests, new_fd, &request_mutex, &got_request);
+		printf("\n%d", pending_requests);
 
-		if (pthread_create (&thread_id, NULL, (void *(*)(void*))client_handler, (void *) &data) !=0) {
+		/* if (pthread_create (&thread_id, NULL, (void *(*)(void*))client_handler, (void *) &data) !=0) {
 			 printf("ERROR creating thread");
 			 return EXIT_FAILURE;
 		}	
-		pthread_join(thread_id, NULL);	
-		//printf("\nfinished");
+		pthread_join(thread_id, NULL);	 */
+		
 	}
 		
 	return 0;

@@ -42,11 +42,13 @@ struct thread_data{
 	user_node_t *auth_list;
 	user_t login_input;
 	
+	
 };
 typedef struct request request_t;
 struct request {
-    int number;             /* number of the request                  */
-    struct request* next;   /* pointer to next request, NULL if none. */
+	int request_num;
+    thread_data_t *data;            
+    request_t* next;   
 };
 
 
