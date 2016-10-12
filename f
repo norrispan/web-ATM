@@ -11,6 +11,5 @@
         <File name="data.h" />
         <File name="Distributed_Systems_CAB403_Assignment_Specification_Semester_2_2016.pdf" />
         <File name="server.c" />
-        <File name="threadpool.c" />
     </Project>
 </NotepadPlus>

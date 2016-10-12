@@ -25,8 +25,8 @@
 
 #define DEFAULT_PORT 12345 
 #define BACKLOG 10 
-
 #define THREADS_NUM 2
+
 
 
 void argument_check(int argc, char *argv[], short my_port){
@@ -39,7 +39,6 @@ void argument_check(int argc, char *argv[], short my_port){
 		exit(1);
 	}
 } 
-
 
 void authentication(int numbytes, int new_fd, user_node_t *user_list, user_t login_input){
 		bool valid = false;
@@ -76,19 +75,18 @@ void authentication(int numbytes, int new_fd, user_node_t *user_list, user_t log
 	
 }
 
-
 void *client_handler(void *ptr){
 	thread_data_t *data;            
     data = (thread_data_t *) ptr;
 	authentication(data->numbytes, data->new_fd, data->user_list, data->login_input);
+	
 }
-
 
 int main(int argc, char *argv[]){	
 	// variables for client server ===============================================================
-	int sock_fd;  // listen on sock_fd, new connection on new_fd 
-	struct sockaddr_in my_addr;    // my address information 
-	struct sockaddr_in their_addr; // connector's address information 
+	int sock_fd;  						// listen on sock_fd, new connection on new_fd 
+	struct sockaddr_in my_addr;    		// my address information 
+	struct sockaddr_in their_addr; 		// connector's address information 
 	socklen_t sin_size;
 	short my_port = DEFAULT_PORT;
 	
@@ -116,9 +114,9 @@ int main(int argc, char *argv[]){
 		exit(1);
 	}
 	// generate the end point 
-	my_addr.sin_family = AF_INET;         // host byte order
-	my_addr.sin_port = htons(my_port);     // short, network byte order 
-	my_addr.sin_addr.s_addr = INADDR_ANY; // auto-fill with my IP 
+	my_addr.sin_family = AF_INET;         		// host byte order
+	my_addr.sin_port = htons(my_port);     		// short, network byte order 
+	my_addr.sin_addr.s_addr = INADDR_ANY; 		// auto-fill with my IP 
 	// bind the socket to the end point 
 	if (bind(sock_fd, (struct sockaddr *)&my_addr, sizeof(struct sockaddr)) == -1) {
 		perror("bind");
@@ -132,66 +130,23 @@ int main(int argc, char *argv[]){
 	printf("server starts listnening ...\n");
 	
 	
+	while(1){
 	
-	
-	
-	
-	if ((data.new_fd = accept(sock_fd, (struct sockaddr *)&their_addr, &sin_size)) == -1) {
-		perror("accept");
-		//continue;
-	}
-	printf("server: got connection from %s\n", inet_ntoa(their_addr.sin_addr));
-		
-		
-		
-		
-		
-		
-	if (pthread_create (&thread_id, NULL, (void *(*)(void*))client_handler, (void *) &data) !=0) {
-         printf("ERROR creating thread");
-         return EXIT_FAILURE;
-    }	
-	pthread_join(thread_id, NULL);
-		
-//=============        connection          =========================================================		
-/*
-
-	while( new_fd = accept(socket_fd, (struct sockaddr *)&their_addr, &sin_size) )
-    {
+		if ((data.new_fd = accept(sock_fd, (struct sockaddr *)&their_addr, &sin_size)) == -1) {
+			perror("accept");
+			continue;
+		}
 		printf("server: got connection from %s\n", inet_ntoa(their_addr.sin_addr));
-         
-        pthread_t thread;
-        
-         
-        if( pthread_create( &thread , NULL ,  connection_handler , (void*) new_fd) < 0)
-        {
-            perror("could not create thread");
-            return 1;
-        }
-         
-        //Now join the thread , so that we dont terminate before the thread
-        pthread_join( thread , NULL);
-        puts("Handler assigned");
-    }
-*/
-////////////////////////////////////////////////////////////////////////////////////////////////////
 		
-//-------------        thread pool          ---------------------------------------------------------		
-
-
-
-
-	
-//=============        thread pool          =========================================================
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
 		
-//-------------        authentication      ---------------------------------------------------------		
+	}
 
-//=============        authentication      =========================================================		
-			
-				
+	if (pthread_create (&thread_id, NULL, (void *(*)(void*))client_handler, (void *) &data) !=0) {
+			 printf("ERROR creating thread");
+			 return EXIT_FAILURE;
+	}	
+	pthread_join(thread_id, NULL);	
+	printf("\nfinished");
 	
 		
 	return 0;
