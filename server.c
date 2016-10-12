@@ -22,11 +22,21 @@
 
 */
 
-
 #define DEFAULT_PORT 12345 
 #define BACKLOG 10 
-#define THREADS_NUM 2
+#define THREADS_NUM 1
 
+
+pthread_mutex_t request_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
+pthread_cond_t  got_request   = PTHREAD_COND_INITIALIZER;
+
+int pending_requests = 0;   /* number of pending requests, initially none */
+
+request_t* requests = NULL;     /* head of linked list of requests. */
+request_t* last_request = NULL; /* pointer to last request.         */
+
+
+user_node_t *user_list;
 
 
 void argument_check(int argc, char *argv[], short my_port){
@@ -40,7 +50,7 @@ void argument_check(int argc, char *argv[], short my_port){
 	}
 } 
 
-void authentication(int numbytes, int new_fd, user_node_t *user_list, user_t login_input){
+void authentication(int numbytes, int new_fd, user_node_t *auth_list, user_t login_input){
 		bool valid = false;
 		
 		if ((numbytes = recv(new_fd, login_input.username, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
@@ -49,10 +59,10 @@ void authentication(int numbytes, int new_fd, user_node_t *user_list, user_t log
 		if ((numbytes = recv(new_fd, login_input.pin, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
 			perror("recv");
 		}
-
+		auth_list = user_list;
 		
-		for( ; user_list != NULL; user_list = user_list->next) {
-			if(strcmp(login_input.username, user_list->login->username) == 0 && strcmp(login_input.pin, user_list->login->pin) == 0){
+		for( ; auth_list != NULL; auth_list = auth_list->next) {
+			if(strcmp(login_input.username, auth_list->login->username) == 0 && strcmp(login_input.pin, auth_list->login->pin) == 0){
 				valid = true;
 				break;
 			}
@@ -78,7 +88,7 @@ void authentication(int numbytes, int new_fd, user_node_t *user_list, user_t log
 void *client_handler(void *ptr){
 	thread_data_t *data;            
     data = (thread_data_t *) ptr;
-	authentication(data->numbytes, data->new_fd, data->user_list, data->login_input);
+	authentication(data->numbytes, data->new_fd, data->auth_list, data->login_input);
 	
 }
 
@@ -94,14 +104,11 @@ int main(int argc, char *argv[]){
 	thread_data_t data;
 	
 	// variables for login ========================================================================
-	data.user_list = NULL;
-	data.login_input.username = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
-	data.login_input.pin = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
-	data.login_input.client_no = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	
 	
 //-------------------------------------------------------------------------------------------------	
-	data.user_list = get_authentication();
+	user_list = get_authentication();
+	
 	argument_check(argc, argv, my_port);
 //=================================================================================================	
 
@@ -139,15 +146,15 @@ int main(int argc, char *argv[]){
 		printf("server: got connection from %s\n", inet_ntoa(their_addr.sin_addr));
 		
 		
-	}
+	
 
-	if (pthread_create (&thread_id, NULL, (void *(*)(void*))client_handler, (void *) &data) !=0) {
+		if (pthread_create (&thread_id, NULL, (void *(*)(void*))client_handler, (void *) &data) !=0) {
 			 printf("ERROR creating thread");
 			 return EXIT_FAILURE;
-	}	
-	pthread_join(thread_id, NULL);	
-	printf("\nfinished");
-	
+		}	
+		pthread_join(thread_id, NULL);	
+		//printf("\nfinished");
+	}
 		
 	return 0;
 }
