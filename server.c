@@ -24,7 +24,7 @@
 
 #define DEFAULT_PORT 12345 
 #define BACKLOG 10 
-#define THREADS_NUM 1
+#define THREADS_NUM 10
 
 
 pthread_mutex_t request_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
@@ -100,11 +100,6 @@ request_t* get_request(pthread_mutex_t* p_mutex){
     return a_request;
 	
 }
-
-
-
-
-
 
 void argument_check(int argc, char *argv[], short my_port){
 	if(argv[1] != NULL){
@@ -198,13 +193,13 @@ int main(int argc, char *argv[]){
 	socklen_t sin_size;
 	short my_port = DEFAULT_PORT;
 	
-	pthread_t thread_id;
-	//thread_data_t data;
+	pthread_t thread_ids[THREADS_NUM];
+
 	
 	// variables for login ========================================================================
 	
 	
-//-------------------------------------------------------------------------------------------------	
+
 	user_list = get_authentication();
 	
 	argument_check(argc, argv, my_port);
@@ -245,11 +240,15 @@ int main(int argc, char *argv[]){
 		
 		add_request(pending_requests, new_fd, &request_mutex, &got_request);
 		
-		if (pthread_create(&thread_id, NULL, handle_requests_loop, NULL) !=0){
-			printf("ERROR creating thread");
-			return EXIT_FAILURE;
 		
-		};
+		for(int i = 0; i < THREADS_NUM; i++){
+			if (pthread_create(&thread_ids[i], NULL, handle_requests_loop, NULL) !=0){
+				printf("ERROR creating thread");
+				return EXIT_FAILURE;
+			};
+			
+		}
+		
 	}
 		
 	return 0;
