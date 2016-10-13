@@ -38,7 +38,6 @@ void authentication(int numbytes, int sockfd){
 	}
 }
 
-
 void send_login(user_t my_login, int sockfd){
 	if (send(sockfd, my_login.username, DATA_BUF_SIZE * sizeof(char), 0) == -1){
 		perror("send");
@@ -56,9 +55,6 @@ void get_login(user_t my_login){
 	gets(my_login.pin);
 }
 
-
-
-
 void welcome(){
 	printf("========================================");
 	printf("\n\n\n\nWelcome to the Online ATM System\n\n\n\n");
@@ -70,8 +66,6 @@ int main(int argc, char *argv[]){
 	int sockfd, numbytes;  
 	struct hostent *he;
 	struct sockaddr_in their_addr; 
-	
-	
 	
 	user_t my_login;
 	

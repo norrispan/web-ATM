@@ -35,16 +35,6 @@ struct user_node{
 };
 
 
-typedef struct thread_data thread_data_t;
-struct thread_data{
-	int numbytes; 
-	int new_fd; 
-	char *username;
-	user_node_t *auth_list;
-	user_t login_input;
-	
-	
-};
 typedef struct request request_t;
 struct request {
 	int request_num;
@@ -53,8 +43,17 @@ struct request {
 };
 
 
+typedef struct thread_data thread_data_t;
+struct thread_data{
+	int numbytes; 
+	int new_fd; 
+	char *username;
+	user_node_t *user_login_list;
+	user_t login_input;
 
-user_node_t *get_authentication();
+};
+
+
 
 
 #endif

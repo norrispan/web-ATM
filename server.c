@@ -14,6 +14,7 @@
 #include <errno.h> 
 #include <arpa/inet.h>
 #include "data.h"
+#include "s_func_h.h"
 
 /* 
 
@@ -35,7 +36,7 @@ int pending_requests = 0;
 request_t* requests = NULL;     
 request_t* last_request = NULL; 
 
-user_node_t *user_list;
+
 
 
 
@@ -72,20 +73,15 @@ void add_request(int request_num, int new_fd, pthread_mutex_t *p_mutex, pthread_
 }
 
 request_t* get_request(pthread_mutex_t* p_mutex){
-	
-	
 	int rc;                         
     request_t* a_request;      
-
     rc = pthread_mutex_lock(p_mutex);
-
     if (pending_requests > 0) {
         a_request = requests;
         requests = a_request->next;
         if (requests == NULL) { 
             last_request = NULL;
-        }
-        
+        }   
         pending_requests--;
     }
     else { 
@@ -98,57 +94,11 @@ request_t* get_request(pthread_mutex_t* p_mutex){
 	
 }
 
-void argument_check(int argc, char *argv[], short my_port){
-	if(argv[1] != NULL){
-		my_port = atoi(argv[1]);
-	}
-	
-	if (argc > 2 || my_port < 1 || my_port > 65535) {
-		fprintf(stderr,"usage: port error\n");
-		exit(1);
-	}
-} 
 
-void authentication(int numbytes, int new_fd, user_node_t *auth_list, user_t login_input){
-		
-		
-		bool valid = false;
-		
-		if ((numbytes = recv(new_fd, login_input.username, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
-			perror("recv");
-		}	
-		if ((numbytes = recv(new_fd, login_input.pin, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
-			perror("recv");
-		}
-		auth_list = user_list;
-		
-		for( ; auth_list != NULL; auth_list = auth_list->next) {
-			if(strcmp(login_input.username, auth_list->login->username) == 0 && strcmp(login_input.pin, auth_list->login->pin) == 0){
-				valid = true;
-				break;
-			}
-		}
-		
-		if(valid){
-			if (send(new_fd, LOGIN_SUCCESS, sizeof(char), 0) == -1){
-				perror("send");
-			}
-			//printf("\nlogin success");
-			
-		}
-		else{
-			if (send(new_fd, LOGIN_FAIL, sizeof(char), 0) == -1){
-				perror("send");
-			}
-			//printf("\nlogin fail");
-			close(new_fd);
-		}
-	
-}
 
 void handle_client(thread_data_t *thr_data){
 	
-	authentication(thr_data->numbytes, thr_data->new_fd, thr_data->auth_list, thr_data->login_input);
+	authentication(thr_data->numbytes, thr_data->new_fd, thr_data->user_login_list, thr_data->login_input);
 	
 }
 
@@ -196,18 +146,19 @@ int main(int argc, char *argv[]){
 	
 	pthread_t thread_ids[THREADS_NUM];
 	thread_data_t thr_data_array[THREADS_NUM];
-	for(int i = 0; i < THREADS_NUM; i++){
-		thr_data_array[i].login_input.username = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
-		thr_data_array[i].login_input.pin = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
-		thr_data_array[i].login_input.client_no = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
-	}
+	
 	
 	// variables for login ========================================================================
 	
 	
-
+	user_node_t *user_list;
 	user_list = get_authentication();
-	
+	for(int i = 0; i < THREADS_NUM; i++){
+		thr_data_array[i].user_login_list = user_list;
+		thr_data_array[i].login_input.username = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
+		thr_data_array[i].login_input.pin = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
+		thr_data_array[i].login_input.client_no = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
+	}
 	argument_check(argc, argv, my_port);
 //=================================================================================================	
 

@@ -7,9 +7,10 @@
             <File name="data\Transactions.txt" />
         </Folder>
         <File name="client.c" />
-        <File name="data.c" />
         <File name="data.h" />
         <File name="Distributed_Systems_CAB403_Assignment_Specification_Semester_2_2016.pdf" />
         <File name="server.c" />
+        <File name="s_func.c" />
+		<File name="s_func_h.h" />
     </Project>
 </NotepadPlus>
