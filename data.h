@@ -39,6 +39,7 @@ typedef struct thread_data thread_data_t;
 struct thread_data{
 	int numbytes; 
 	int new_fd; 
+	char *username;
 	user_node_t *auth_list;
 	user_t login_input;
 	
@@ -47,7 +48,7 @@ struct thread_data{
 typedef struct request request_t;
 struct request {
 	int request_num;
-    thread_data_t *data;            
+    int new_fd;           
     request_t* next;   
 };
 

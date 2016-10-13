@@ -38,23 +38,20 @@ request_t* last_request = NULL;
 user_node_t *user_list;
 
 
+
 void add_request(int request_num, int new_fd, pthread_mutex_t *p_mutex, pthread_cond_t *p_cond_var){
     
 	int rc;                         
     request_t* a_request;     
 
     a_request = (request_t*)malloc(sizeof(request_t));
-	a_request->data = (thread_data_t*)malloc(sizeof(thread_data_t));
-	a_request->data->login_input.username = (char* )malloc(sizeof(DATA_BUF_SIZE));
-	a_request->data->login_input.pin = (char* )malloc(sizeof(DATA_BUF_SIZE));
-    a_request->data->login_input.client_no = (char* )malloc(sizeof(DATA_BUF_SIZE));
+	a_request->new_fd = new_fd;
 	
 	if (!a_request) { 
         fprintf(stderr, "add_request: out of memory\n");
         exit(1);
     }
 	a_request->request_num = request_num;
-    a_request->data->new_fd = new_fd;
     a_request->next = NULL;
     
     rc = pthread_mutex_lock(p_mutex);
@@ -71,7 +68,7 @@ void add_request(int request_num, int new_fd, pthread_mutex_t *p_mutex, pthread_
     pending_requests++;
     rc = pthread_mutex_unlock(p_mutex);
     rc = pthread_cond_signal(p_cond_var);
-	printf("\n%d", request_num);
+	//printf("\n%d", request_num);
 }
 
 request_t* get_request(pthread_mutex_t* p_mutex){
@@ -116,7 +113,7 @@ void authentication(int numbytes, int new_fd, user_node_t *auth_list, user_t log
 		
 		
 		bool valid = false;
-
+		
 		if ((numbytes = recv(new_fd, login_input.username, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
 			perror("recv");
 		}	
@@ -149,19 +146,20 @@ void authentication(int numbytes, int new_fd, user_node_t *auth_list, user_t log
 	
 }
 
-void handle_client(request_t* a_request){
+void handle_client(thread_data_t *thr_data){
 	
-	authentication(a_request->data->numbytes, a_request->data->new_fd, a_request->data->auth_list, a_request->data->login_input);
+	authentication(thr_data->numbytes, thr_data->new_fd, thr_data->auth_list, thr_data->login_input);
 	
 }
 
-void *handle_requests_loop(){
+void *handle_requests_loop(void *ptr){
 	          
-    
+    thread_data_t *thr_data;            
+    thr_data = (thread_data_t *) ptr;
 	
 	int rc;                        
     request_t* a_request;      
-  
+	
 
     rc = pthread_mutex_lock(&request_mutex);
 
@@ -169,9 +167,12 @@ void *handle_requests_loop(){
 
         if (pending_requests > 0) { 
             a_request = get_request(&request_mutex);
-            if (a_request) { 
-                rc = pthread_mutex_unlock(&request_mutex);
-                handle_client(a_request);
+            if (a_request) {
+				
+				thr_data->new_fd = a_request->new_fd;
+                
+				rc = pthread_mutex_unlock(&request_mutex);
+                handle_client(thr_data);
                 free(a_request);
                 rc = pthread_mutex_lock(&request_mutex);
             }
@@ -194,7 +195,12 @@ int main(int argc, char *argv[]){
 	short my_port = DEFAULT_PORT;
 	
 	pthread_t thread_ids[THREADS_NUM];
-
+	thread_data_t thr_data_array[THREADS_NUM];
+	for(int i = 0; i < THREADS_NUM; i++){
+		thr_data_array[i].login_input.username = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
+		thr_data_array[i].login_input.pin = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
+		thr_data_array[i].login_input.client_no = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
+	}
 	
 	// variables for login ========================================================================
 	
@@ -242,7 +248,7 @@ int main(int argc, char *argv[]){
 		
 		
 		for(int i = 0; i < THREADS_NUM; i++){
-			if (pthread_create(&thread_ids[i], NULL, handle_requests_loop, NULL) !=0){
+			if (pthread_create(&thread_ids[i], NULL, (void *(*)(void*))handle_requests_loop, (void *) &thr_data_array[i]) !=0){
 				printf("ERROR creating thread");
 				return EXIT_FAILURE;
 			};
