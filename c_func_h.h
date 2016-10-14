@@ -1,13 +1,14 @@
-#ifndef __S_FUNC_H_H__
-#define __S_FUNC_H_H__ 
+#ifndef __C_FUNC_H_H__
+#define __C_FUNC_H_H__ 
 
 
 /* 
 
 	Author: PAN Ningyuan 
-	Date: September 2016 
+	Date: October 2016 
 
 */
+
 
 #include <stdio.h>      
 #include <stdlib.h> 
@@ -24,12 +25,20 @@
 #include <sys/wait.h> 
 #include <errno.h> 
 #include <arpa/inet.h>
+#include <netdb.h> 
 #include "data.h"
 
-user_node_t *get_authentication();
 
-void argument_check(int argc, char *argv[], short my_port);
 
-void authentication(pthread_mutex_t *p_mutex, int numbytes, int new_fd, user_node_t *user_login_list, user_t login_input);
+void welcome(void);
+void get_login(user_t my_login);
+void send_login(user_t my_login, int sockfd);
+void authentication(int numbytes, int sockfd, user_t my_login);
+void menu(user_t my_login);
+void client(int numbytes, int sockfd, user_t my_login);
+
+
+
+
 
 #endif

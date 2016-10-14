@@ -3,19 +3,8 @@
 #include <string.h>
 #include <stddef.h> 
 #include <stdbool.h>
-#include <unistd.h>    
-#include <time.h>
-#include <pthread.h> 
-#include <semaphore.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h> 
-#include <sys/wait.h> 
-#include <errno.h> 
-#include <arpa/inet.h>
-#include <netdb.h> 
 #include "data.h"
-
+#include "c_func_h.h"
 /* 
 
 	Author: PAN Ningyuan 
@@ -23,43 +12,7 @@
 
 */
 
-void authentication(int numbytes, int sockfd){
-	char *login_status = (char *)malloc(sizeof(char));
-	if ((numbytes = recv(sockfd, login_status, sizeof(char), 0)) == -1){
-			perror("recv");
-		}
-	if(atoi(login_status)){
-		printf("\nlogin success");
-			
-	}
-	else{
-		printf("\nYou entered either an incorrect Username or PIN - disconecting");
-		exit(0);
-	}
-}
 
-void send_login(user_t my_login, int sockfd){
-	if (send(sockfd, my_login.username, DATA_BUF_SIZE * sizeof(char), 0) == -1){
-		perror("send");
-	}
-	if (send(sockfd, my_login.pin, DATA_BUF_SIZE * sizeof(char), 0) == -1){
-		perror("send");
-	}
-}
-
-void get_login(user_t my_login){
-	printf("\n\nYou are required to logon with your registered Username and PIN\n\n");
-	printf("Please enter your username -->");
-	gets(my_login.username);
-	printf("Please enter your pin -->");
-	gets(my_login.pin);
-}
-
-void welcome(){
-	printf("========================================");
-	printf("\n\n\n\nWelcome to the Online ATM System\n\n\n\n");
-	printf("========================================\n\n");
-}
 
 int main(int argc, char *argv[]){
 	
@@ -72,10 +25,6 @@ int main(int argc, char *argv[]){
 	my_login.username = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	my_login.pin = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	my_login.client_no = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
-	
-	
-	
-	
 	
 	if (argc != 3) {
 		fprintf(stderr,"usage: client hostname\n");
@@ -101,14 +50,9 @@ int main(int argc, char *argv[]){
 		perror("connect");
 		exit(1);
 	}
+	client(numbytes, sockfd, my_login);
 	
 	
-	welcome();
-	get_login(my_login);
-	send_login(my_login, sockfd);
-	authentication(numbytes, sockfd);
-	
-
 	
 
 	return 0;

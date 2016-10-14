@@ -3,16 +3,6 @@
 #include <string.h>
 #include <stddef.h> 
 #include <stdbool.h>
-#include <unistd.h>    
-#include <time.h>
-#include <pthread.h> 
-#include <semaphore.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h> 
-#include <sys/wait.h> 
-#include <errno.h> 
-#include <arpa/inet.h>
 #include "data.h"
 #include "s_func_h.h"
 
@@ -29,6 +19,7 @@
 
 
 pthread_mutex_t request_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
+
 pthread_cond_t  got_request   = PTHREAD_COND_INITIALIZER;
 
 int pending_requests = 0;   
@@ -94,12 +85,13 @@ request_t* get_request(pthread_mutex_t* p_mutex){
 	
 }
 
-
-
 void handle_client(thread_data_t *thr_data){
 	
-	authentication(thr_data->numbytes, thr_data->new_fd, thr_data->user_login_list, thr_data->login_input);
-	
+	authentication(thr_data->data_mutex, thr_data->numbytes, thr_data->new_fd, thr_data->user_login_list, thr_data->login_input);
+
+	for( ; thr_data->user_login_list != NULL; thr_data->user_login_list = thr_data->user_login_list->next) {
+		printf("\n%s   %d\n", thr_data->user_login_list->login->username, thr_data->user_login_list->login->status);
+	}
 }
 
 void *handle_requests_loop(void *ptr){
@@ -137,7 +129,7 @@ void *handle_requests_loop(void *ptr){
 }
 
 int main(int argc, char *argv[]){	
-	// variables for client server ===============================================================
+	// variables for client server 
 	int sock_fd, new_fd;  						// listen on sock_fd, new connection on new_fd 
 	struct sockaddr_in my_addr;    		// my address information 
 	struct sockaddr_in their_addr; 		// connector's address information 
@@ -147,17 +139,20 @@ int main(int argc, char *argv[]){
 	pthread_t thread_ids[THREADS_NUM];
 	thread_data_t thr_data_array[THREADS_NUM];
 	
-	
+	pthread_mutex_t data_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
 	// variables for login ========================================================================
 	
 	
 	user_node_t *user_list;
 	user_list = get_authentication();
+	
 	for(int i = 0; i < THREADS_NUM; i++){
+		thr_data_array[i].data_mutex = &data_mutex;
 		thr_data_array[i].user_login_list = user_list;
 		thr_data_array[i].login_input.username = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
 		thr_data_array[i].login_input.pin = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
 		thr_data_array[i].login_input.client_no = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
+		
 	}
 	argument_check(argc, argv, my_port);
 //=================================================================================================	
@@ -203,6 +198,7 @@ int main(int argc, char *argv[]){
 				printf("ERROR creating thread");
 				return EXIT_FAILURE;
 			};
+			//printf("\n%s  \n", thr_data_array[i].login_input.username);
 			
 		}
 		

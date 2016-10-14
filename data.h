@@ -24,6 +24,7 @@ struct user{
 	char *username;
 	char *pin;
 	char *client_no;
+	int status;
 };
 
 
@@ -47,10 +48,10 @@ typedef struct thread_data thread_data_t;
 struct thread_data{
 	int numbytes; 
 	int new_fd; 
-	char *username;
 	user_node_t *user_login_list;
 	user_t login_input;
-
+	pthread_mutex_t *data_mutex;
+	
 };
 
 
