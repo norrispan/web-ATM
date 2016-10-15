@@ -1,8 +1,8 @@
 #include <stdio.h>      
 #include <stdlib.h> 
 #include "data.h"
-#include "s_func_h.h"
-
+#include "s_basic_h.h"
+#include "s_balance_h.h"
 /* 
 
 	Author: PAN Ningyuan 
@@ -86,9 +86,9 @@ void handle_client(thread_data_t *thr_data){
 	
 	authentication(thr_data->data_mutex, thr_data->numbytes, thr_data->new_fd, thr_data->user_login_list, thr_data->login_input);
 
-	for( ; thr_data->user_login_list != NULL; thr_data->user_login_list = thr_data->user_login_list->next) {
-		printf("\n%s   %d\n", thr_data->user_login_list->login->username, thr_data->user_login_list->login->status);
-	}
+	//for( ; thr_data->user_login_list != NULL; thr_data->user_login_list = thr_data->user_login_list->next) {
+	//	printf("\n%s   %d\n", thr_data->user_login_list->login->username, thr_data->user_login_list->login->status);
+	//}
 }
 
 void *handle_requests_loop(void *ptr){

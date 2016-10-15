@@ -1,7 +1,8 @@
 #include <stdio.h>      
 #include <stdlib.h> 
 #include "data.h"
-#include "c_func_h.h"
+#include "c_basic_h.h"
+#include "c_balance_h.h"
 /* 
 
 	Author: PAN Ningyuan 
@@ -22,6 +23,11 @@ int main(int argc, char *argv[]){
 	my_login.username = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	my_login.pin = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	my_login.client_no = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+	my_login.first_name = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+	my_login.last_name = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+	for(int i = 0; i < ACCOUNT_TYPE_NUM; i++){
+		my_login.accounts[i] = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+	}
 	
 	if (argc != 3) {
 		fprintf(stderr,"usage: client hostname\n");

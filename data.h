@@ -10,17 +10,29 @@
 
 
 
-// Useful macros for reading data from txt files
+#include <stdio.h>      
+#include <stdlib.h> 
+#include <string.h>
+#include <stddef.h> 
+#include <stdbool.h>
+#include <signal.h>
+#include <unistd.h>    
+#include <time.h>
+#include <pthread.h> 
+#include <semaphore.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h> 
+#include <sys/wait.h> 
+#include <errno.h> 
+#include <arpa/inet.h>
+#include <netdb.h> 
        
 #define LINE_BUF_SIZE 100       
 #define DATA_BUF_SIZE 10
 #define LOGIN_FAIL "0"
 #define LOGIN_SUCCESS "1"
 #define ACCOUNT_TYPE_NUM 3
-
-// data type that holds value of authentication details
-
-
 
 
 
