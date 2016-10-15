@@ -15,6 +15,7 @@ user_node_t *get_user_details(){
 
 	char* line1 = (char*)malloc(LINE_BUF_SIZE * sizeof(char));
 	char* line2 = (char*)malloc(LINE_BUF_SIZE * sizeof(char));
+	char* account_line = (char*)malloc(LINE_BUF_SIZE * sizeof(char));
 	int start_line = 1;
 	int current_line = 0;
 	
@@ -35,20 +36,26 @@ user_node_t *get_user_details(){
 				new->login->client_no = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
 				new->login->first_name = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
 				new->login->last_name = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
+				
+				for(int i = 0; i < ACCOUNT_TYPE_NUM; i++){
+					new->login->accounts[i] = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
+				}
+			
 				new->login->status = 0;
 				
 				fgets(line1, LINE_BUF_SIZE * sizeof(char),file1);			
 				fgets(line2, LINE_BUF_SIZE * sizeof(char),file2);
 				sscanf(line1, "%s", new->login->username);
-				
 				sscanf(line1, "%*s%s", new->login->pin);
-				
 				sscanf(line1, "%*s%*s%s", new->login->client_no);
 				
 				
 				sscanf(line2, "%s", new->login->first_name);
 				sscanf(line2, "%*s%s", new->login->last_name);
-				printf("\n%s       %s %s\n", new->login->client_no, new->login->first_name, new->login->last_name);
+				sscanf(line2, "%*s%*s%*s%s", account_line);
+				sscanf(account_line, "%[^,],%[^,],%[^,]", new->login->accounts[0], new->login->accounts[1], new->login->accounts[2]);
+	
+				printf("\n%s       %s       %s     %s %s    %s %s %s\n", new->login->username, new->login->pin, new->login->first_name, new->login->last_name, new->login->client_no, new->login->accounts[0], new->login->accounts[1], new->login->accounts[2]);
 				new->next = user_list;
 				user_list = new;
 				start_line ++;
@@ -71,6 +78,8 @@ user_node_t *get_user_details(){
 	line1 = NULL;
 	free(line2);
 	line2 = NULL;
+	free(account_line);
+	account_line = NULL;
 	return user_list;
 }
 

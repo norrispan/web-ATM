@@ -16,9 +16,14 @@
 #define DATA_BUF_SIZE 10
 #define LOGIN_FAIL "0"
 #define LOGIN_SUCCESS "1"
-
+#define ACCOUNT_TYPE_NUM 3
 
 // data type that holds value of authentication details
+
+
+
+
+
 typedef struct user user_t;
 struct user{
 	char *username;
@@ -26,7 +31,7 @@ struct user{
 	char *client_no;
 	char *first_name;
 	char *last_name;
-	
+	char *accounts[ACCOUNT_TYPE_NUM];
 	int status;
 };
 
