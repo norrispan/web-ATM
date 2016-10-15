@@ -1,8 +1,5 @@
 #include <stdio.h>      
 #include <stdlib.h> 
-#include <string.h>
-#include <stddef.h> 
-#include <stdbool.h>
 #include "data.h"
 #include "s_func_h.h"
 
@@ -129,6 +126,9 @@ void *handle_requests_loop(void *ptr){
 }
 
 int main(int argc, char *argv[]){	
+
+
+	signal(SIGINT, signal_handler);
 	// variables for client server 
 	int sock_fd, new_fd;  						// listen on sock_fd, new connection on new_fd 
 	struct sockaddr_in my_addr;    		// my address information 
@@ -144,7 +144,7 @@ int main(int argc, char *argv[]){
 	
 	
 	user_node_t *user_list;
-	user_list = get_authentication();
+	user_list = get_user_details();
 	
 	for(int i = 0; i < THREADS_NUM; i++){
 		thr_data_array[i].data_mutex = &data_mutex;
@@ -154,6 +154,8 @@ int main(int argc, char *argv[]){
 		thr_data_array[i].login_input.client_no = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
 		
 	}
+	
+	
 	argument_check(argc, argv, my_port);
 //=================================================================================================	
 

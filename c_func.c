@@ -1,6 +1,5 @@
 #include <stdio.h>      
 #include <stdlib.h> 
-#include <string.h>
 #include "data.h"
 #include "c_func_h.h"
 
@@ -13,12 +12,11 @@ void authentication(int numbytes, int sockfd, user_t my_login){
 			perror("recv");
 	}
 	if(atoi(my_login.client_no) == 0){
-		printf("\nYou fail\n");
+		printf("\nYou entered either an incorrect Username or PIN - disconnecting\n");
 		exit(0);
 	}
 	else{
-		
-		printf("\n%d\n", atoi(my_login.client_no));
+		//printf("\n%d\n", atoi(my_login.client_no));
 	}
 }
 
@@ -42,7 +40,8 @@ void get_login(user_t my_login){
 void menu(user_t my_login){
 	system("clear");
 	printf("Welcome to the ATM System");
-	printf("\n");
+	printf("\n\nYou are currently log in as ");
+	
 	while(1){
 		
 	};
@@ -59,7 +58,7 @@ void client(int numbytes, int sockfd, user_t my_login){
 	get_login(my_login);
 	send_login(my_login, sockfd);
 	authentication(numbytes, sockfd, my_login);
-	//menu(my_login);
+	menu(my_login);
 
 	
 }

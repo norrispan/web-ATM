@@ -15,6 +15,7 @@
 #include <string.h>
 #include <stddef.h> 
 #include <stdbool.h>
+#include <signal.h>
 #include <unistd.h>    
 #include <time.h>
 #include <pthread.h> 

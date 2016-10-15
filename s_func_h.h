@@ -14,6 +14,7 @@
 #include <string.h>
 #include <stddef.h> 
 #include <stdbool.h>
+#include <signal.h>
 #include <unistd.h>    
 #include <time.h>
 #include <pthread.h> 
@@ -26,10 +27,14 @@
 #include <arpa/inet.h>
 #include "data.h"
 
-user_node_t *get_authentication();
+user_node_t *get_user_details();
+
+void signal_handler(int signal);
 
 void argument_check(int argc, char *argv[], short my_port);
 
 void authentication(pthread_mutex_t *p_mutex, int numbytes, int new_fd, user_node_t *user_login_list, user_t login_input);
+
+
 
 #endif
