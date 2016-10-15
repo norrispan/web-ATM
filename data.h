@@ -34,7 +34,9 @@
 #define LOGIN_SUCCESS "1"
 #define ACCOUNT_TYPE_NUM 3
 
-
+#define SAVING_ID_NUM 11
+#define LOAN_ID_NUM 12
+#define CREDIT_ID_NUM 13
 
 typedef struct user user_t;
 struct user{

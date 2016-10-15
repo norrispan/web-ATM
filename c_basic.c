@@ -2,6 +2,7 @@
 #include <stdlib.h> 
 #include "data.h"
 #include "c_basic_h.h"
+#include "c_balance_h.h"
 
 
 void welcome(){
@@ -90,9 +91,10 @@ void client(int numbytes, int sockfd, user_t my_login){
 	get_login(my_login);
 	send_login(my_login, sockfd);
 	authentication(numbytes, sockfd, my_login);
+	
 	selection = option_select();
 	switch(selection){
-		case 1: printf("\naccount balance");
+		case 1: show_balance(my_login);
 		
 		
 		

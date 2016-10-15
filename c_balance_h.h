@@ -13,6 +13,7 @@
 
 #include "data.h"
 
+void show_balance(user_t my_login);
 
 
 

@@ -9,11 +9,52 @@
 
 */
 
+void sort_account(char *accounts[]){
+	char *temp_saving = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
+	char *temp_loan = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
+	char *temp_credit = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
+	for(int i = 0; i < ACCOUNT_TYPE_NUM; i++){
+		if(atoi(accounts[i]) != 0){
+			if((atoi(accounts[i]) % SAVING_ID_NUM) == 0){
+				strcpy(temp_saving, accounts[i]);
+				
+			}			
+			if((atoi(accounts[i]) % LOAN_ID_NUM) == 0){
+				strcpy(temp_loan, accounts[i]);			
+					
+			}
+			
+			if((atoi(accounts[i]) % CREDIT_ID_NUM) == 0){
+				strcpy(temp_credit, accounts[i]);
+			}
+		}
+	
+	}
+	for(int i = 0; i < ACCOUNT_TYPE_NUM; i++){
+		strcpy(accounts[i], "");
+	}
+	strcpy(accounts[0], temp_saving);
+	strcpy(accounts[1], temp_loan);
+	strcpy(accounts[2], temp_credit);
+	free(temp_saving);
+	temp_saving = NULL;
+	free(temp_loan);
+	temp_loan = NULL;
+	free(temp_credit);
+	temp_credit = NULL;
+	
+	
+}
+
 user_node_t *get_user_details(){
 	user_node_t *user_list = NULL;
 	char* line1 = (char*)malloc(LINE_BUF_SIZE * sizeof(char));
 	char* line2 = (char*)malloc(LINE_BUF_SIZE * sizeof(char));
 	char* account_line = (char*)malloc(LINE_BUF_SIZE * sizeof(char));
+	
+	
+	
+	
 	int start_line = 1;
 	int current_line = 0;
 	FILE* file1 = fopen("./data/Authentication.txt","r");	
@@ -27,7 +68,7 @@ user_node_t *get_user_details(){
 				user_node_t *new = (user_node_t *)malloc(sizeof(user_node_t));
 				new->login = (user_t *)malloc(sizeof(user_t)); 
 				new->login->username = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
-				new-> login->pin = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
+				new->login->pin = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
 				new->login->client_no = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
 				new->login->first_name = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
 				new->login->last_name = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
@@ -43,7 +84,11 @@ user_node_t *get_user_details(){
 				sscanf(line2, "%s", new->login->first_name);
 				sscanf(line2, "%*s%s", new->login->last_name);
 				sscanf(line2, "%*s%*s%*s%s", account_line);
+	
 				sscanf(account_line, "%[^,],%[^,],%[^,]", new->login->accounts[0], new->login->accounts[1], new->login->accounts[2]);
+				sort_account(new->login->accounts);
+				printf("\n %d  %d  %d\n",  atoi(new->login->accounts[0]), atoi(new->login->accounts[1]), atoi(new->login->accounts[2]));
+				
 				new->next = user_list;
 				user_list = new;
 				start_line ++;	

@@ -12,6 +12,8 @@
 
 #include "data.h"
 
+void sort_account(char *accounts[]);
+
 user_node_t *get_user_details();
 
 void signal_handler(int signal);
