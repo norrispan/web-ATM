@@ -11,8 +11,12 @@
         <File name="server.c" />
         <File name="s_basic.c" />
         <File name="s_basic_h.h" />
+        <File name="s_balance.c" />
+        <File name="s_balance_h.h" />
         <File name="client.c" />
-        <File name="c_func.c" />
-        <File name="c_func_h.h" />
+        <File name="c_basic.c" />
+        <File name="c_basic_h.h" />
+        <File name="c_balance.c" />
+        <File name="c_balance_h.h" />
     </Project>
 </NotepadPlus>
