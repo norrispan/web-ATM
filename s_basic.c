@@ -111,7 +111,6 @@ user_node_t *get_user_details(){
 	return user_list;
 }
 
-
 void signal_handler(int signal){
 	if(signal == SIGINT){
 		//free everything
@@ -119,7 +118,6 @@ void signal_handler(int signal){
 		exit(0);
 	}
 }
-
 
 void argument_check(int argc, char *argv[], short my_port){
 	if(argv[1] != NULL){

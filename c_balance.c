@@ -1,6 +1,7 @@
 #include <stdio.h>      
 #include <stdlib.h> 
 #include "data.h"
+#include "c_basic_h.h"
 #include "c_balance_h.h"
 
 
@@ -35,7 +36,7 @@ void print_account_type(user_t my_login, int num){
 }
 
 
-void balance_menu(user_t my_login){
+int balance_menu(user_t my_login){
 	int num_of_account = 0;
 	
 	printf("\n\n\n\nSelect Account Type");
@@ -65,12 +66,49 @@ void balance_menu(user_t my_login){
 			print_account_type(my_login, 3);
 			break;
 	}
+	return num_of_account;
+}
+
+int get_selection(int num_of_account){
+	bool invalid = false; 
+	char selection;
+	do{
+		printf("\n\nEnter your selection (E/e to exit) - ");
+		gets(&selection);
+		if(selection == 'E' || selection == 'e'){
+			exit_client();
+		}
+		else if(atoi(&selection) <= num_of_account && atoi(&selection) > 0){
+			return atoi(&selection);
+		}
+		else{
+			printf("\nInvalid selection");
+			invalid = true;
+		}
+	}while(invalid);
+}
+
+void send_selection(user_t my_login, int selection, int sockfd){
+	int account_type_no = selection - 1;
+	while(atoi(my_login.accounts[account_type_no]) == 0){
+		account_type_no++;
+	}
+	char *account_type = (char *)malloc(sizeof(char));
+	
+	snprintf(account_type, 10, "%d", account_type_no);
+	
+	if (send(sockfd, account_type, sizeof(char), 0) == -1){
+		perror("send");
+	}
 }
 
 
-
-void show_balance(user_t my_login){
-	balance_menu(my_login);
+void show_balance(user_t my_login, int sockfd){
+	int num_of_account;
+	int selection;
+	num_of_account = balance_menu(my_login);
+	selection = get_selection(num_of_account);
+	send_selection(my_login, selection, sockfd);
 	
 }
 

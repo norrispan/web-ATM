@@ -13,7 +13,7 @@
 
 #include "data.h"
 
-
+int balance_enquiry(int numbytes, int new_fd, user_t login_input);
 
 
 #endif

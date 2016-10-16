@@ -21,6 +21,7 @@ void send_login(user_t my_login, int sockfd);
 void authentication(int numbytes, int sockfd, user_t my_login);
 void menu(void);
 int option_select(void);
+void exit_client(void);
 void client(int numbytes, int sockfd, user_t my_login);
 
 

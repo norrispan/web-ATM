@@ -84,6 +84,9 @@ int option_select(){
 	return atoi(&selection);
 }
 
+void exit_client(){
+	exit(0);
+}
 
 void client(int numbytes, int sockfd, user_t my_login){
 	int selection;
@@ -94,7 +97,7 @@ void client(int numbytes, int sockfd, user_t my_login){
 	
 	selection = option_select();
 	switch(selection){
-		case 1: show_balance(my_login);
+		case 1: show_balance(my_login, sockfd);
 		
 		
 		

@@ -13,8 +13,14 @@
 
 #include "data.h"
 void print_account_type(user_t my_login, int num);
-void balance_menu(user_t my_login);
-void show_balance(user_t my_login);
+
+int balance_menu(user_t my_login);
+
+int get_selection(int num_of_account);
+
+void send_selection(user_t my_login, int selection, int sockfd);
+
+void show_balance(user_t my_login, int sockfd);
 
 
 

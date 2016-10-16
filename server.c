@@ -85,10 +85,9 @@ request_t* get_request(pthread_mutex_t* p_mutex){
 void handle_client(thread_data_t *thr_data){
 	
 	authentication(thr_data->data_mutex, thr_data->numbytes, thr_data->new_fd, thr_data->user_login_list, thr_data->login_input);
-	
-	//printf("\n%s %s    %s\n", thr_data->login_input.username, thr_data->login_input.pin, thr_data->login_input.client_no);
-	//printf("\n%s %s\n", thr_data->login_input.first_name, thr_data->login_input.last_name);
-	//printf("\n %s  %s  %s\n", thr_data->login_input.accounts[0], thr_data->login_input.accounts[1], thr_data->login_input.accounts[2]);
+	int account_type_no;
+	account_type_no = balance_enquiry(thr_data->numbytes, thr_data->new_fd, thr_data->login_input);
+	printf("\n%s\n", thr_data->login_input.accounts[account_type_no]);
 }
 
 void *handle_requests_loop(void *ptr){
