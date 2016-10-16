@@ -85,10 +85,10 @@ request_t* get_request(pthread_mutex_t* p_mutex){
 void handle_client(thread_data_t *thr_data){
 	
 	authentication(thr_data->data_mutex, thr_data->numbytes, thr_data->new_fd, thr_data->user_login_list, thr_data->login_input);
-
-	//for( ; thr_data->user_login_list != NULL; thr_data->user_login_list = thr_data->user_login_list->next) {
-	//	printf("\n%s   %d\n", thr_data->user_login_list->login->username, thr_data->user_login_list->login->status);
-	//}
+	
+	//printf("\n%s %s    %s\n", thr_data->login_input.username, thr_data->login_input.pin, thr_data->login_input.client_no);
+	//printf("\n%s %s\n", thr_data->login_input.first_name, thr_data->login_input.last_name);
+	//printf("\n %s  %s  %s\n", thr_data->login_input.accounts[0], thr_data->login_input.accounts[1], thr_data->login_input.accounts[2]);
 }
 
 void *handle_requests_loop(void *ptr){
@@ -152,7 +152,11 @@ int main(int argc, char *argv[]){
 		thr_data_array[i].login_input.username = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
 		thr_data_array[i].login_input.pin = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
 		thr_data_array[i].login_input.client_no = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
-		
+		thr_data_array[i].login_input.first_name = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
+		thr_data_array[i].login_input.last_name = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
+		for(int j = 0; j < ACCOUNT_TYPE_NUM; j++){
+			thr_data_array[i].login_input.accounts[j] = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
+		} 
 	}
 	
 	
