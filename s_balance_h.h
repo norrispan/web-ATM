@@ -13,7 +13,7 @@
 
 #include "data.h"
 
-int balance_enquiry(int numbytes, int new_fd, user_t login_input);
-
+int recv_account_type(int numbytes, int new_fd, user_t login_input);
+acc_node_t *get_account_details();
 
 #endif

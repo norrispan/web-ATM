@@ -51,10 +51,7 @@ user_node_t *get_user_details(){
 	char* line1 = (char*)malloc(LINE_BUF_SIZE * sizeof(char));
 	char* line2 = (char*)malloc(LINE_BUF_SIZE * sizeof(char));
 	char* account_line = (char*)malloc(LINE_BUF_SIZE * sizeof(char));
-	
-	
-	
-	
+
 	int start_line = 1;
 	int current_line = 0;
 	FILE* file1 = fopen("./data/Authentication.txt","r");	

@@ -26,8 +26,6 @@ request_t* last_request = NULL;
 
 
 
-
-
 void add_request(int request_num, int new_fd, pthread_mutex_t *p_mutex, pthread_cond_t *p_cond_var){
     
 	int rc;                         
@@ -86,7 +84,7 @@ void handle_client(thread_data_t *thr_data){
 	
 	authentication(thr_data->data_mutex, thr_data->numbytes, thr_data->new_fd, thr_data->user_login_list, thr_data->login_input);
 	int account_type_no;
-	account_type_no = balance_enquiry(thr_data->numbytes, thr_data->new_fd, thr_data->login_input);
+	account_type_no = recv_account_type(thr_data->numbytes, thr_data->new_fd, thr_data->login_input);
 	printf("\n%s\n", thr_data->login_input.accounts[account_type_no]);
 }
 
@@ -143,7 +141,11 @@ int main(int argc, char *argv[]){
 	
 	
 	user_node_t *user_list;
+	acc_node_t *acc_bal_list;
 	user_list = get_user_details();
+	acc_bal_list = get_account_details();
+	
+	
 	
 	for(int i = 0; i < THREADS_NUM; i++){
 		thr_data_array[i].data_mutex = &data_mutex;

@@ -28,12 +28,13 @@
 #include <arpa/inet.h>
 #include <netdb.h> 
        
-#define LINE_BUF_SIZE 100       
+#define LINE_BUF_SIZE 100 
+#define LARGE_BUF_SIZE 50      
 #define DATA_BUF_SIZE 10
 #define LOGIN_FAIL "0"
 #define LOGIN_SUCCESS "1"
-#define ACCOUNT_TYPE_NUM 3
 
+#define ACCOUNT_TYPE_NUM 3
 #define SAVING_ID_NUM 11
 #define LOAN_ID_NUM 12
 #define CREDIT_ID_NUM 13
@@ -57,6 +58,20 @@ struct user_node{
     user_node_t *next;
 };
 
+
+typedef struct acc acc_t;
+struct acc{
+	char *acc_no;
+	char *open_bal;
+	char *close_bal;
+};
+
+
+typedef struct acc_node acc_node_t;
+struct acc_node{
+	acc_t *account_detail;
+	acc_node_t *next;
+};
 
 typedef struct request request_t;
 struct request {
