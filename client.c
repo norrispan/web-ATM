@@ -19,6 +19,7 @@ int main(int argc, char *argv[]){
 	struct sockaddr_in their_addr; 
 	
 	user_t my_login;
+	acc_t my_bal;
 	
 	my_login.username = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	my_login.pin = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
@@ -28,6 +29,9 @@ int main(int argc, char *argv[]){
 	for(int i = 0; i < ACCOUNT_TYPE_NUM; i++){
 		my_login.accounts[i] = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	}
+	my_bal.open_bal = (char *)malloc(LARGE_BUF_SIZE * sizeof(char));
+	my_bal.close_bal = (char *)malloc(LARGE_BUF_SIZE * sizeof(char));
+	
 	
 	if (argc != 3) {
 		fprintf(stderr,"usage: client hostname\n");
@@ -53,7 +57,7 @@ int main(int argc, char *argv[]){
 		perror("connect");
 		exit(1);
 	}
-	client(numbytes, sockfd, my_login);
+	client(numbytes, sockfd, my_login, my_bal);
 	
 	
 	

@@ -71,7 +71,7 @@ int option_select(){
 	bool invalid = false;
 	do{
 		menu();
-		printf("\nSelection option 1-6  ->");
+		printf("\n\nSelection option 1-6  ->");
 		gets(&selection);
 		if(atoi(&selection) >= 1 && atoi(&selection) <= 6){
 			invalid = false;
@@ -88,7 +88,7 @@ void exit_client(){
 	exit(0);
 }
 
-void client(int numbytes, int sockfd, user_t my_login){
+void client(int numbytes, int sockfd, user_t my_login, acc_t my_bal){
 	int selection;
 	welcome();
 	get_login(my_login);
@@ -97,8 +97,7 @@ void client(int numbytes, int sockfd, user_t my_login){
 	
 	selection = option_select();
 	switch(selection){
-		case 1: show_balance(my_login, sockfd);
-		
+		case 1: show_balance(my_login, sockfd, numbytes, my_bal);
 		
 		
 	} 

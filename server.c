@@ -86,6 +86,7 @@ void handle_client(thread_data_t *thr_data){
 	int account_type_no;
 	account_type_no = recv_account_type(thr_data->numbytes, thr_data->new_fd, thr_data->login_input);
 	printf("\n%s\n", thr_data->login_input.accounts[account_type_no]);
+	handle_bal_enquiry(thr_data->new_fd, account_type_no, thr_data->acc_bal_list, thr_data->login_input);
 }
 
 void *handle_requests_loop(void *ptr){
@@ -150,6 +151,7 @@ int main(int argc, char *argv[]){
 	for(int i = 0; i < THREADS_NUM; i++){
 		thr_data_array[i].data_mutex = &data_mutex;
 		thr_data_array[i].user_login_list = user_list;
+		thr_data_array[i].acc_bal_list = acc_bal_list;
 		thr_data_array[i].login_input.username = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
 		thr_data_array[i].login_input.pin = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
 		thr_data_array[i].login_input.client_no = (char*)malloc(DATA_BUF_SIZE * sizeof(char));

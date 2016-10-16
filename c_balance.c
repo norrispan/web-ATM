@@ -88,11 +88,18 @@ int get_selection(int num_of_account){
 	}while(invalid);
 }
 
-void send_selection(user_t my_login, int selection, int sockfd){
+int convert_type(user_t my_login, int selection){
 	int account_type_no = selection - 1;
 	while(atoi(my_login.accounts[account_type_no]) == 0){
 		account_type_no++;
 	}
+	return account_type_no;
+}
+
+void send_selection(user_t my_login, int selection, int sockfd){
+	int account_type_no;
+	account_type_no = convert_type(my_login, selection);
+	
 	char *account_type = (char *)malloc(sizeof(char));
 	
 	snprintf(account_type, 10, "%d", account_type_no);
@@ -102,13 +109,25 @@ void send_selection(user_t my_login, int selection, int sockfd){
 	}
 }
 
+void get_balance(int numbytes, int sockfd, char *close_bal, user_t my_login, int selection){
+	if ((numbytes = recv(sockfd, close_bal, LARGE_BUF_SIZE * sizeof(char), 0)) == -1){
+		perror("recv");
+	}
+	int account_type_no;
+	account_type_no = convert_type(my_login, selection);
+	printf("\n\n=======================================================\n");
+	printf("\nAccount Name - %s %s\n", my_login.first_name, my_login.last_name);
+	printf("\nCurrent balance for Account %s : $%s\n", my_login.accounts[account_type_no], close_bal);
+	printf("\n\n=======================================================\n");
+}
 
-void show_balance(user_t my_login, int sockfd){
+
+void show_balance(user_t my_login, int sockfd, int numbytes, acc_t my_bal){
 	int num_of_account;
 	int selection;
 	num_of_account = balance_menu(my_login);
 	selection = get_selection(num_of_account);
 	send_selection(my_login, selection, sockfd);
-	
+	get_balance(numbytes, sockfd, my_bal.close_bal, my_login, selection);
 }
 

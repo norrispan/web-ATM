@@ -22,7 +22,7 @@ void authentication(int numbytes, int sockfd, user_t my_login);
 void menu(void);
 int option_select(void);
 void exit_client(void);
-void client(int numbytes, int sockfd, user_t my_login);
+void client(int numbytes, int sockfd, user_t my_login, acc_t my_bal);
 
 
 
