@@ -22,7 +22,7 @@ int convert_acc_type(user_t my_login, int selection);
 
 void send_selection(user_t my_login, int selection, int sockfd);
 
-void get_balance(int numbytes, int sockfd, char *close_bal, user_t my_login, int selection);
+void get_balance(int numbytes, int sockfd, char *close_bal, char *open_bal, user_t my_login, int selection);
 
 
 void show_balance(user_t my_login, int sockfd, int numbytes, acc_t my_bal);

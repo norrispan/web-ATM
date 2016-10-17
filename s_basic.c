@@ -139,12 +139,14 @@ void authentication(pthread_mutex_t *p_mutex, int numbytes, int new_fd, user_nod
 		auth_list = user_login_list;
 		for( ; auth_list != NULL; auth_list = auth_list->next) {
 			if(strcmp(login_input.username, auth_list->login->username) == 0 && strcmp(login_input.pin, auth_list->login->pin) == 0){
+				
 				strcpy(login_input.client_no, auth_list->login->client_no);
 				strcpy(login_input.first_name, auth_list->login->first_name);
 				strcpy(login_input.last_name, auth_list->login->last_name);
 				for(int i = 0; i < ACCOUNT_TYPE_NUM; i++){
 					strcpy(login_input.accounts[i], auth_list->login->accounts[i]);
-				} 
+				}  
+				
 	
 				valid = true;
 			
@@ -167,9 +169,9 @@ void authentication(pthread_mutex_t *p_mutex, int numbytes, int new_fd, user_nod
 			}
 			for(int i = 0; i < ACCOUNT_TYPE_NUM; i++){
 				if (send(new_fd, auth_list->login->accounts[i], DATA_BUF_SIZE * sizeof(char), 0) == -1){
-				perror("send");
+					perror("send");
 				}
-			} 
+			}  
 		}
 		else{
 			if (send(new_fd, LOGIN_FAIL, DATA_BUF_SIZE * sizeof(char), 0) == -1){

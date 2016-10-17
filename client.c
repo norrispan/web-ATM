@@ -29,8 +29,8 @@ int main(int argc, char *argv[]){
 	for(int i = 0; i < ACCOUNT_TYPE_NUM; i++){
 		my_login.accounts[i] = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	}
-	my_bal.open_bal = (char *)malloc(LARGE_BUF_SIZE * sizeof(char));
-	my_bal.close_bal = (char *)malloc(LARGE_BUF_SIZE * sizeof(char));
+	my_bal.open_bal = (char *)malloc(LINE_BUF_SIZE * sizeof(char));
+	my_bal.close_bal = (char *)malloc(LINE_BUF_SIZE * sizeof(char));
 	
 	
 	if (argc != 3) {
