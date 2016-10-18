@@ -67,21 +67,31 @@ void menu(){
 }
 
 int option_select(){
-	char selection;
-	bool invalid = false;
+	bool invalid;
+	char *buffer = (char *)malloc(sizeof(char));
+	int selection;
 	do{
 		menu();
 		printf("\n\nSelection option 1-6  ->");
-		gets(&selection);
-		if(atoi(&selection) >= 1 && atoi(&selection) <= 6){
-			invalid = false;
-		}
-		else{
-			printf("\n\nInvalid selection. Please select option from menu!");
+		gets(buffer);
+		if(strlen(buffer) > 1){
+			printf("\nInvalid selection");
 			invalid = true;
 		}
+		else{
+			if(atoi(buffer) >= 1 && atoi(buffer) <= 6){
+				invalid = false;
+			}
+			else{
+				printf("\n\nInvalid selection. Please select option from menu!");
+				invalid = true;
+			}
+		}
 	}while(invalid);
-	return atoi(&selection);
+	selection = atoi(buffer);
+	free(buffer);
+	buffer = NULL;
+	return selection;
 }
 
 void exit_client(){

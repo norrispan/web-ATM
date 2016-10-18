@@ -71,21 +71,33 @@ int balance_menu(user_t my_login){
 
 int get_selection(int num_of_account){
 	bool invalid = false; 
-	char selection;
+	char *buffer = (char *)malloc(sizeof(char));
+	int selection;
 	do{
 		printf("\n\nEnter your selection (E/e to exit) - ");
-		gets(&selection);
-		if(selection == 'E' || selection == 'e'){
-			exit_client();
-		}
-		else if(atoi(&selection) <= num_of_account && atoi(&selection) > 0){
-			return atoi(&selection);
-		}
-		else{
+		gets(buffer);
+		if(strlen(buffer) > 1){
 			printf("\nInvalid selection");
 			invalid = true;
 		}
+		else{
+			if(*buffer == 'E' || *buffer == 'e'){
+				exit_client();
+			}
+			else if(atoi(buffer) <= num_of_account && atoi(buffer) > 0){
+				break;
+			}
+			else{
+				printf("\nInvalid selection");
+				invalid = true;
+			}
+		}
 	}while(invalid);
+	
+	selection = atoi(buffer);
+	free(buffer);
+	buffer = NULL;
+	return selection;
 }
 
 int convert_type(user_t my_login, int selection){
@@ -107,6 +119,8 @@ void send_selection(user_t my_login, int selection, int sockfd){
 	if (send(sockfd, account_type, DATA_BUF_SIZE * sizeof(char), 0) == -1){
 		perror("send");
 	}
+	free(account_type);
+	account_type = NULL;
 }
 
 void get_balance(int numbytes, int sockfd, char *close_bal, char *open_bal, user_t my_login, int selection){
@@ -119,13 +133,13 @@ void get_balance(int numbytes, int sockfd, char *close_bal, char *open_bal, user
 	}
 	int account_type_no;
 	account_type_no = convert_type(my_login, selection);
-	while(!getchar()){
-		printf("\n\n=======================================================\n");
-		printf("\nAccount Name - %s %s\n", my_login.first_name, my_login.last_name);
-		printf("\nCurrent balance for Account %s : $%s\n", my_login.accounts[account_type_no], close_bal);
-		printf("\n\n=======================================================\n");
+	
+	printf("\n\n=======================================================\n");
+	printf("\nAccount Name - %s %s\n", my_login.first_name, my_login.last_name);
+	printf("\nCurrent balance for Account %s : $%s\n", my_login.accounts[account_type_no], close_bal);
+	printf("\n\n=======================================================\n");
 		
-	}
+
 	
 }
 

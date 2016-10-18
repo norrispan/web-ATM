@@ -10,6 +10,8 @@ int recv_account_type(int numbytes, int new_fd, user_t login_input){
 		perror("recv");
 	}
 	int account_type_no = atoi(account_type);
+	free(account_type);
+	account_type = NULL;
 	return account_type_no;
 }
 
