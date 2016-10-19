@@ -124,7 +124,7 @@ void send_selection(user_t my_login, int selection, int sockfd){
 }
 
 void get_balance(int numbytes, int sockfd, char *close_bal, char *open_bal, user_t my_login, int selection){
-	
+	char input;
 	if ((numbytes = recv(sockfd, close_bal, LINE_BUF_SIZE * sizeof(char), 0)) == -1){
 		perror("recv");
 	}
@@ -138,8 +138,10 @@ void get_balance(int numbytes, int sockfd, char *close_bal, char *open_bal, user
 	printf("\nAccount Name - %s %s\n", my_login.first_name, my_login.last_name);
 	printf("\nCurrent balance for Account %s : $%s\n", my_login.accounts[account_type_no], close_bal);
 	printf("\n\n=======================================================\n");
+	gets(&input);
+	while(&input == NULL){
 		
-
+	}	
 	
 }
 

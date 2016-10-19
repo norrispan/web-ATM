@@ -2,6 +2,7 @@
 #include <stdlib.h> 
 #include "data.h"
 #include "s_basic_h.h"
+#include "s_balance_h.h"
 /* 
 
 	Author: PAN Ningyuan 
@@ -129,66 +130,70 @@ void argument_check(int argc, char *argv[], short my_port){
 int authentication(pthread_mutex_t *p_mutex, int numbytes, int new_fd, user_node_t *user_login_list, user_t login_input){		
 	bool valid = false;
 	user_node_t *auth_list;
+	user_node_t *temp;
 	int lock;	
 	if ((numbytes = recv(new_fd, login_input.username, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
 		close(new_fd);
-		login_input.status = false;
 		return FAIL;
 	}	
 	if ((numbytes = recv(new_fd, login_input.pin, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
 		close(new_fd);
-		login_input.status = false;
 		return FAIL;
 	}
 	auth_list = user_login_list;
 	for( ; auth_list != NULL; auth_list = auth_list->next) {
 		if(strcmp(login_input.username, auth_list->login->username) == 0 && strcmp(login_input.pin, auth_list->login->pin) == 0){				
-			strcpy(login_input.client_no, auth_list->login->client_no);
-			strcpy(login_input.first_name, auth_list->login->first_name);
-			strcpy(login_input.last_name, auth_list->login->last_name);
-			for(int i = 0; i < ACCOUNT_TYPE_NUM; i++){
+			
+			if(auth_list->login->status == false){
+				strcpy(login_input.client_no, auth_list->login->client_no);
+				strcpy(login_input.first_name, auth_list->login->first_name);
+				strcpy(login_input.last_name, auth_list->login->last_name);
+				for(int i = 0; i < ACCOUNT_TYPE_NUM; i++){
 				strcpy(login_input.accounts[i], auth_list->login->accounts[i]);
-			}  
-			valid = true;
-			break;
+				}
+				valid = true;
+				break;
+			}
+			
+			
 		}
 	}
 		
 	if(valid){
 		if (send(new_fd, auth_list->login->client_no, DATA_BUF_SIZE * sizeof(char), 0) == -1){
 			close(new_fd);
-			login_input.status = false;
 			return FAIL;
 		}
 		if (send(new_fd, auth_list->login->first_name, DATA_BUF_SIZE * sizeof(char), 0) == -1){
 			close(new_fd);
-			login_input.status = false;
 			return FAIL;
 		}
 		if (send(new_fd, auth_list->login->last_name, DATA_BUF_SIZE * sizeof(char), 0) == -1){
 			close(new_fd);
-			login_input.status = false;
 			return FAIL;
 		}
 		for(int i = 0; i < ACCOUNT_TYPE_NUM; i++){
 			if (send(new_fd, auth_list->login->accounts[i], DATA_BUF_SIZE * sizeof(char), 0) == -1){
 				close(new_fd);
-				login_input.status = false;
+				//lock = pthread_mutex_lock(p_mutex);
+				//auth_list->login->status == false;
+				//login_input.status = false;
+				//lock = pthread_mutex_unlock(p_mutex);
 				return FAIL;
 			}
 		}
-		login_input.status = true;
 		return SUCCESS;
 	
 	}
 	else{
 		if (send(new_fd, FAIL_SIGNAL, DATA_BUF_SIZE * sizeof(char), 0) == -1){
-			close(new_fd);
-			login_input.status = false;
-			return FAIL;
+			
 		}
 		close(new_fd);
-		login_input.status = false;
+		//lock = pthread_mutex_lock(p_mutex);
+		//auth_list->login->status == false;
+		//	login_input.status = false;
+		//lock = pthread_mutex_unlock(p_mutex);
 		return FAIL;
 	}
 	
@@ -207,7 +212,6 @@ int recv_selection(int numbytes, int new_fd){
 	return selection;
 }
 
-
 int recv_test(int numbytes, int new_fd){
 	char *buf = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	char *send_buf = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
@@ -222,3 +226,37 @@ int recv_test(int numbytes, int new_fd){
 	}
 	return SUCCESS;
 } 
+
+
+void handle_client(thread_data_t *thr_data){
+	bool online = false;
+	int selection;
+	int acc_type;
+	if(authentication(thr_data->data_mutex, thr_data->numbytes, thr_data->new_fd, thr_data->user_login_list, thr_data->login_input)){
+		online = true;
+	}
+	while(online){
+		selection = 0;
+		selection = recv_selection(thr_data->numbytes, thr_data->new_fd);
+		if(selection == 0){
+			online = false;
+			break;
+		}
+		if(selection == 1){
+			
+			if(handle_bal_enquiry(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input) == FAIL){
+				online = false;
+				break;
+			}
+			
+			
+		}
+		if(selection == 2){
+			recv_test(thr_data->numbytes, thr_data->new_fd);
+		}
+		
+	}
+	printf("\nclient exit\n");
+
+	
+}

@@ -80,32 +80,6 @@ request_t* get_request(pthread_mutex_t* p_mutex){
 	
 }
 
-void handle_client(thread_data_t *thr_data){
-	bool online = false;
-	int selection;
-	if(authentication(thr_data->data_mutex, thr_data->numbytes, thr_data->new_fd, thr_data->user_login_list, thr_data->login_input)){
-		online = true;
-	}
-	while(online){
-		selection = 0;
-		selection = recv_selection(thr_data->numbytes, thr_data->new_fd);
-		if(selection == 0){
-			online = false;
-			break;
-		}
-		if(selection == 1){
-			recv_test(thr_data->numbytes, thr_data->new_fd);
-		}
-		if(selection == 2){
-			recv_test(thr_data->numbytes, thr_data->new_fd);
-		}
-		
-	}
-	printf("\nclient exit\n");
-	
-	
-	
-}
 
 void *handle_requests_loop(void *ptr){
 	          
@@ -178,6 +152,7 @@ int main(int argc, char *argv[]){
 		for(int j = 0; j < ACCOUNT_TYPE_NUM; j++){
 			thr_data_array[i].login_input.accounts[j] = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
 		} 
+		thr_data_array[i].login_input.status = false;
 	}
 	
 	

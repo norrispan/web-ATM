@@ -204,7 +204,7 @@ void client(int numbytes, int sockfd, user_t my_login, acc_t my_bal){
 		send_menu_select(selection, sockfd);
 		switch(selection){
 			case 1: 
-				test_function(selection, sockfd, numbytes);
+				show_balance(my_login, sockfd, numbytes, my_bal);
 				break;
 			case 2: 
 				test_function(selection, sockfd, numbytes);

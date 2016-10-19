@@ -11,6 +11,7 @@
 
 
 #include "data.h"
+#include "s_balance_h.h"
 
 void sort_account(char *accounts[]);
 
@@ -24,6 +25,6 @@ int authentication(pthread_mutex_t *p_mutex, int numbytes, int new_fd, user_node
 
 int recv_selection(int numbytes, int new_fd);
 int recv_test(int numbytes, int new_fd);
-
+void handle_client(thread_data_t *thr_data);
 
 #endif

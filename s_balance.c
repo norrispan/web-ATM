@@ -61,8 +61,10 @@ acc_node_t *get_account_details(){
 	return acc_bal_list;
 }
 
-int handle_bal_enquiry(int new_fd, int acc_type, acc_node_t *acc_bal_list, user_t login_input){
+int handle_bal_enquiry(int numbytes, int new_fd, acc_node_t *acc_bal_list, user_t login_input){
 	bool is_match = false;
+	int acc_type;
+	acc_type = recv_account_type(numbytes, new_fd, login_input);	
 	acc_node_t *temp_list;
 	temp_list = acc_bal_list;
 	for( ; temp_list != NULL; temp_list = temp_list->next){
