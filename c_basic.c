@@ -52,9 +52,9 @@ void send_login(user_t my_login, int sockfd){
 void get_login(user_t my_login){
 	printf("\n\nYou are required to logon with your registered Username and PIN\n\n");
 	printf("Please enter your username -->");
-	fgets(my_login.username, DATA_BUF_SIZE * sizeof(char), stdin);
+	gets(my_login.username);
 	printf("Please enter your pin -->");
-	fgets(my_login.pin, DATA_BUF_SIZE * sizeof(char), stdin);
+	gets(my_login.pin);
 }
 
 void menu(){
@@ -74,7 +74,7 @@ int option_select(){
 	do{
 		menu();
 		printf("\n\nSelection option 1-6  ->");
-		fgets(buffer, sizeof(char), stdin);
+		gets(buffer);
 		if(strlen(buffer) > 1){
 			printf("\nInvalid selection");
 			invalid = true;
