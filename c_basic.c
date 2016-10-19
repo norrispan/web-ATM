@@ -3,6 +3,7 @@
 #include "data.h"
 #include "c_basic_h.h"
 #include "c_balance_h.h"
+#include "c_withdraw_h.h"
 
 
 void welcome(){
@@ -189,8 +190,6 @@ void test_function(int selection, int sockfd, int numbytes){
 	
 } 
 
-
-
 void client(int numbytes, int sockfd, user_t my_login, acc_t my_bal){
 	int selection;
 	bool not_exit = true;
@@ -200,6 +199,7 @@ void client(int numbytes, int sockfd, user_t my_login, acc_t my_bal){
 	authentication(numbytes, sockfd, my_login);
 	
 	while(not_exit){
+		//system("clear");
 		selection = option_select();
 		send_menu_select(selection, sockfd);
 		switch(selection){
@@ -207,7 +207,7 @@ void client(int numbytes, int sockfd, user_t my_login, acc_t my_bal){
 				show_balance(my_login, sockfd, numbytes, my_bal);
 				break;
 			case 2: 
-				test_function(selection, sockfd, numbytes);
+				make_withdraw(my_login, sockfd, numbytes, my_bal);
 				break;
 			case 3:
 				test_function(selection, sockfd, numbytes);

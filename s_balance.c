@@ -79,10 +79,7 @@ int handle_bal_enquiry(int numbytes, int new_fd, acc_node_t *acc_bal_list, user_
 			perror("send");
 			return FAIL;
 		}
-		if (send(new_fd, temp_list->account_detail->open_bal, LINE_BUF_SIZE * sizeof(char), 0) == -1){
-			perror("send");
-			return FAIL;
-		} 
+
 		return SUCCESS;
 	}
 	else{

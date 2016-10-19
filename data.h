@@ -37,12 +37,19 @@
 #define FAIL_SIGNAL "0"
 #define SUCCESS_SIGNAL "1"
 
-
+#define DOT 46
+#define ZERO 48
+#define NINE 57
 
 #define ACCOUNT_TYPE_NUM 3
+#define SAVING 0
+#define LOAN 1
+#define CREDIT 2
 #define SAVING_ID_NUM 11
 #define LOAN_ID_NUM 12
 #define CREDIT_ID_NUM 13
+
+#define CREDIT_LIMIT 5000
 
 typedef struct user user_t;
 struct user{

@@ -19,17 +19,46 @@
 
 
 int main(){
-	char *a = malloc(sizeof(char));
-	//char a[10];
+	char *a = malloc(10 * sizeof(char));
+
 	printf("\nenter something:");
-	//selection = getchar();
+
 	gets(a);
-		printf("\n%s\n   %d", a, strlen(a));
-	if(a == "e"){
-		printf("\nOK");
+	bool has_char = false;
+	
+	for(int i = 0; i < strlen(a); i++){
+		if(*(a + i) == 46){
+			if(i == strlen(a) - 1 - 2 || i == strlen(a) - 1 - 1){
+				
+			}
+			else{
+				has_char = true;
+				break;
+			}
+				
+		}
+		
+		if(*(a + i) >= 48 && *(a + i) <= 57 || *(a + i) == 46){
+			
+		}
+		else{
+			has_char = true;
+			break;
+		}
+	}
+	
+	if(has_char){
+		printf("\nnot correct");
+		
 	}
 	else{
-		printf("\nnot OK");
+		printf("\nOKKKKK");
+	}
+	
+	
+	printf("\n%f   %d\n", atof(a), strlen(a));
+	while(!getchar()){
+		
 	}
 	
 	return 0;

@@ -17,6 +17,7 @@ int main(int argc, char *argv[]){
 	int sockfd, numbytes;  
 	struct hostent *he;
 	struct sockaddr_in their_addr; 
+
 	
 	user_t my_login;
 	acc_t my_bal;

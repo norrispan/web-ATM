@@ -12,17 +12,18 @@
 
 
 #include "data.h"
-void print_account_type(user_t my_login, int num);
+int get_selection(int num_of_account);
+
+void print_acct_bal(user_t my_login, int num);
 
 int balance_menu(user_t my_login);
 
-int get_selection(int num_of_account);
 
-int convert_acc_type(user_t my_login, int selection);
+int convert_bal(user_t my_login, int selection);
 
-void send_selection(user_t my_login, int selection, int sockfd);
+void send_bal_select(user_t my_login, int selection, int sockfd);
 
-void get_balance(int numbytes, int sockfd, char *close_bal, char *open_bal, user_t my_login, int selection);
+void get_balance(int numbytes, int sockfd, char *close_bal, user_t my_login, int selection);
 
 
 void show_balance(user_t my_login, int sockfd, int numbytes, acc_t my_bal);
