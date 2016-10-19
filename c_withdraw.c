@@ -57,7 +57,7 @@ char *get_withdraw_amount(){
 	char *amount = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	do{
 		printf("\nEnter the amount to withdraw (E/e to exit) : $");
-		gets(amount);
+		fgets(amount, DATA_BUF_SIZE * sizeof(char), stdin);
 		for(int i = 0; i < strlen(amount); i++){
 			if(*(amount + i) == DOT){
 				if(i == strlen(amount) - 1 - 2 || i == strlen(amount) - 1 - 1){	

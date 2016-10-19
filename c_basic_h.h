@@ -24,7 +24,7 @@ int option_select(void);
 void send_menu_select(int selection, int sockfd);
 void exit_client(void);
 void client(int numbytes, int sockfd, user_t my_login, acc_t my_bal);
-void test_function(int selection, int sockfd, int numbytes);
+
 
 
 

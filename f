@@ -13,10 +13,14 @@
         <File name="s_basic_h.h" />
         <File name="s_balance.c" />
         <File name="s_balance_h.h" />
+        <File name="s_withdraw.c" />
+        <File name="s_withdraw_h.h" />
         <File name="client.c" />
         <File name="c_basic.c" />
         <File name="c_basic_h.h" />
         <File name="c_balance.c" />
         <File name="c_balance_h.h" />
+        <File name="c_withdraw.c" />
+        <File name="c_withdraw_h.h" />
     </Project>
 </NotepadPlus>

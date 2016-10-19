@@ -11,7 +11,7 @@ int get_selection(int num_of_account){
 	int selection;
 	do{
 		printf("\n\nEnter your selection (E/e to exit) - ");
-		gets(buffer);
+		fgets(buffer, sizeof(char), stdin);
 		if(strlen(buffer) > 1){
 			printf("\nInvalid selection");
 			invalid = true;
