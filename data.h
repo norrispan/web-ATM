@@ -30,8 +30,14 @@
        
 #define LINE_BUF_SIZE 100     
 #define DATA_BUF_SIZE 10
-#define LOGIN_FAIL "0"
-#define LOGIN_SUCCESS "1"
+
+#define FAIL 0
+#define SUCCESS 1
+
+#define FAIL_SIGNAL "0"
+#define SUCCESS_SIGNAL "1"
+
+
 
 #define ACCOUNT_TYPE_NUM 3
 #define SAVING_ID_NUM 11
@@ -46,7 +52,7 @@ struct user{
 	char *first_name;
 	char *last_name;
 	char *accounts[ACCOUNT_TYPE_NUM];
-	int status;
+	bool status;
 };
 
 

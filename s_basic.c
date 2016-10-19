@@ -126,58 +126,99 @@ void argument_check(int argc, char *argv[], short my_port){
 	}
 } 
 
-void authentication(pthread_mutex_t *p_mutex, int numbytes, int new_fd, user_node_t *user_login_list, user_t login_input){		
-		bool valid = false;
-		user_node_t *auth_list;
-		int lock;	
-		if ((numbytes = recv(new_fd, login_input.username, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
-			perror("recv");
-		}	
-		if ((numbytes = recv(new_fd, login_input.pin, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
-			perror("recv");
-		}
-		auth_list = user_login_list;
-		for( ; auth_list != NULL; auth_list = auth_list->next) {
-			if(strcmp(login_input.username, auth_list->login->username) == 0 && strcmp(login_input.pin, auth_list->login->pin) == 0){
-				
-				strcpy(login_input.client_no, auth_list->login->client_no);
-				strcpy(login_input.first_name, auth_list->login->first_name);
-				strcpy(login_input.last_name, auth_list->login->last_name);
-				for(int i = 0; i < ACCOUNT_TYPE_NUM; i++){
-					strcpy(login_input.accounts[i], auth_list->login->accounts[i]);
-				}  
-				
-	
-				valid = true;
-			
-				
-					 
-				
-				break;
-			}
-		}
-		
-		if(valid){
-			if (send(new_fd, auth_list->login->client_no, DATA_BUF_SIZE * sizeof(char), 0) == -1){
-				perror("send");
-			}
-			if (send(new_fd, auth_list->login->first_name, DATA_BUF_SIZE * sizeof(char), 0) == -1){
-				perror("send");
-			}
-			if (send(new_fd, auth_list->login->last_name, DATA_BUF_SIZE * sizeof(char), 0) == -1){
-				perror("send");
-			}
+int authentication(pthread_mutex_t *p_mutex, int numbytes, int new_fd, user_node_t *user_login_list, user_t login_input){		
+	bool valid = false;
+	user_node_t *auth_list;
+	int lock;	
+	if ((numbytes = recv(new_fd, login_input.username, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
+		close(new_fd);
+		login_input.status = false;
+		return FAIL;
+	}	
+	if ((numbytes = recv(new_fd, login_input.pin, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
+		close(new_fd);
+		login_input.status = false;
+		return FAIL;
+	}
+	auth_list = user_login_list;
+	for( ; auth_list != NULL; auth_list = auth_list->next) {
+		if(strcmp(login_input.username, auth_list->login->username) == 0 && strcmp(login_input.pin, auth_list->login->pin) == 0){				
+			strcpy(login_input.client_no, auth_list->login->client_no);
+			strcpy(login_input.first_name, auth_list->login->first_name);
+			strcpy(login_input.last_name, auth_list->login->last_name);
 			for(int i = 0; i < ACCOUNT_TYPE_NUM; i++){
-				if (send(new_fd, auth_list->login->accounts[i], DATA_BUF_SIZE * sizeof(char), 0) == -1){
-					perror("send");
-				}
+				strcpy(login_input.accounts[i], auth_list->login->accounts[i]);
 			}  
+			valid = true;
+			break;
 		}
-		else{
-			if (send(new_fd, LOGIN_FAIL, DATA_BUF_SIZE * sizeof(char), 0) == -1){
-				perror("send");
-			}
+	}
+		
+	if(valid){
+		if (send(new_fd, auth_list->login->client_no, DATA_BUF_SIZE * sizeof(char), 0) == -1){
 			close(new_fd);
+			login_input.status = false;
+			return FAIL;
 		}
+		if (send(new_fd, auth_list->login->first_name, DATA_BUF_SIZE * sizeof(char), 0) == -1){
+			close(new_fd);
+			login_input.status = false;
+			return FAIL;
+		}
+		if (send(new_fd, auth_list->login->last_name, DATA_BUF_SIZE * sizeof(char), 0) == -1){
+			close(new_fd);
+			login_input.status = false;
+			return FAIL;
+		}
+		for(int i = 0; i < ACCOUNT_TYPE_NUM; i++){
+			if (send(new_fd, auth_list->login->accounts[i], DATA_BUF_SIZE * sizeof(char), 0) == -1){
+				close(new_fd);
+				login_input.status = false;
+				return FAIL;
+			}
+		}
+		login_input.status = true;
+		return SUCCESS;
+	
+	}
+	else{
+		if (send(new_fd, FAIL_SIGNAL, DATA_BUF_SIZE * sizeof(char), 0) == -1){
+			close(new_fd);
+			login_input.status = false;
+			return FAIL;
+		}
+		close(new_fd);
+		login_input.status = false;
+		return FAIL;
+	}
 	
 }
+
+int recv_selection(int numbytes, int new_fd){
+	char *select_buf = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+	if ((numbytes = recv(new_fd, select_buf, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
+		perror("recv");
+		return FAIL;
+	}
+	int selection = atoi(select_buf);
+	free(select_buf);
+	select_buf = NULL;
+	printf("\n%d\n", selection);
+	return selection;
+}
+
+
+int recv_test(int numbytes, int new_fd){
+	char *buf = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+	char *send_buf = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+	send_buf = "hello";
+	if ((numbytes = recv(new_fd, buf, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
+		perror("recv");
+		return FAIL;
+	}
+	if (send(new_fd, send_buf, DATA_BUF_SIZE * sizeof(char), 0) == -1){
+		perror("send");
+		return FAIL;
+	}
+	return SUCCESS;
+} 

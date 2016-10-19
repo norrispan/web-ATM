@@ -114,7 +114,7 @@ void send_selection(user_t my_login, int selection, int sockfd){
 	
 	char *account_type = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	
-	snprintf(account_type, 10, "%d", account_type_no);
+	snprintf(account_type, DATA_BUF_SIZE, "%d", account_type_no);
 	
 	if (send(sockfd, account_type, DATA_BUF_SIZE * sizeof(char), 0) == -1){
 		perror("send");

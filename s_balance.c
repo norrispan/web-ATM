@@ -7,7 +7,7 @@
 int recv_account_type(int numbytes, int new_fd, user_t login_input){
 	char *account_type = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	if ((numbytes = recv(new_fd, account_type, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
-		perror("recv");
+		return FAIL;
 	}
 	int account_type_no = atoi(account_type);
 	free(account_type);
@@ -39,8 +39,8 @@ acc_node_t *get_account_details(){
 				sscanf(line, "%*s%s", new->account_detail->open_bal);
 				sscanf(line, "%*s%*s%s", new->account_detail->close_bal);		
 				
-				printf("\n%s   %s    %s", new->account_detail->acc_no, new->account_detail->open_bal, new->account_detail->close_bal);
-				printf("\n");
+				//printf("\n%s   %s    %s", new->account_detail->acc_no, new->account_detail->open_bal, new->account_detail->close_bal);
+				//printf("\n");
 				
 				new->next = acc_bal_list;
 				acc_bal_list = new;
@@ -61,24 +61,30 @@ acc_node_t *get_account_details(){
 	return acc_bal_list;
 }
 
-void handle_bal_enquiry(int new_fd, int acc_type, acc_node_t *acc_bal_list, user_t login_input){
-	bool is_empty = true;
+int handle_bal_enquiry(int new_fd, int acc_type, acc_node_t *acc_bal_list, user_t login_input){
+	bool is_match = false;
 	acc_node_t *temp_list;
 	temp_list = acc_bal_list;
 	for( ; temp_list != NULL; temp_list = temp_list->next){
 		if(strcmp(temp_list->account_detail->acc_no, login_input.accounts[acc_type]) == 0){
-			is_empty = false;
+			is_match = true;
 			break;		
 		}	
 	}
 	
-	if(!is_empty){
+	if(is_match){
 		if (send(new_fd, temp_list->account_detail->close_bal, LINE_BUF_SIZE * sizeof(char), 0) == -1){
 			perror("send");
+			return FAIL;
 		}
 		if (send(new_fd, temp_list->account_detail->open_bal, LINE_BUF_SIZE * sizeof(char), 0) == -1){
 			perror("send");
+			return FAIL;
 		} 
+		return SUCCESS;
+	}
+	else{
+		return FAIL;
 	}
 	
 }

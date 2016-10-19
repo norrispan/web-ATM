@@ -17,6 +17,6 @@ int recv_account_type(int numbytes, int new_fd, user_t login_input);
 
 acc_node_t *get_account_details();
 
-void handle_bal_enquiry(int new_fd, int acc_type, acc_node_t *acc_bal_list, user_t login_input);
+int handle_bal_enquiry(int new_fd, int acc_type, acc_node_t *acc_bal_list, user_t login_input);
 
 #endif

@@ -94,30 +94,136 @@ int option_select(){
 	return selection;
 }
 
+void send_menu_select(int selection, int sockfd){
+	char *select_buf = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+	snprintf(select_buf, DATA_BUF_SIZE, "%d", selection);
+	if (send(sockfd, select_buf, DATA_BUF_SIZE * sizeof(char), 0) == -1){
+		perror("send");
+	}
+	free(select_buf);
+	select_buf = NULL;
+}
+
 void exit_client(){
+	
 	exit(0);
 }
 
+void test_function(int selection, int sockfd, int numbytes){
+	char *buf = (char*)malloc(sizeof(char));
+	char *recv_buf = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+	char input;
+	switch(selection){
+		case 1: 
+			printf("\nthis is 1\n");
+			printf("please enter a number: ");
+			gets(buf);
+			if (send(sockfd, buf, DATA_BUF_SIZE * sizeof(char), 0) == -1){
+				perror("send");
+			}
+			if ((numbytes = recv(sockfd, recv_buf, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
+				perror("recv");
+			}
+			break;
+		case 2: 
+			printf("\nthis is 2\n");
+			printf("please enter a number: ");
+			gets(buf);
+			if (send(sockfd, buf, DATA_BUF_SIZE * sizeof(char), 0) == -1){
+				perror("send");
+			}
+			if ((numbytes = recv(sockfd, recv_buf, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
+				perror("recv");
+			}
+			break;
+		case 3: 
+			printf("\nthis is 3\n");
+			printf("please enter a number: ");
+			gets(buf);
+			if (send(sockfd, buf, DATA_BUF_SIZE * sizeof(char), 0) == -1){
+				perror("send");
+			}
+			if ((numbytes = recv(sockfd, recv_buf, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
+				perror("recv");
+			}
+			break;
+		case 4: 
+			printf("\nthis is 4\n");
+			printf("please enter a number: ");
+			gets(buf);
+			if (send(sockfd, buf, DATA_BUF_SIZE * sizeof(char), 0) == -1){
+				perror("send");
+			}
+			if ((numbytes = recv(sockfd, recv_buf, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
+				perror("recv");
+			}
+			break;
+		case 5: 
+			printf("\nthis is 5\n");
+			printf("please enter a number: ");
+			gets(buf);
+			if (send(sockfd, buf, DATA_BUF_SIZE * sizeof(char), 0) == -1){
+				perror("send");
+			}
+			if ((numbytes = recv(sockfd, recv_buf, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
+				perror("recv");
+			}
+			break;
+		case 6: 
+			printf("\nthis is 6\n");
+			printf("please enter a number: ");
+			gets(buf);
+			if (send(sockfd, buf, DATA_BUF_SIZE * sizeof(char), 0) == -1){
+				perror("send");
+			}
+			if ((numbytes = recv(sockfd, recv_buf, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
+				perror("recv");
+			}
+			break;
+	}
+	printf("\npress 4 to return main menu:");
+	gets(&input);
+	while(atoi(&input) != 4){
+		
+	}
+	
+} 
 
 
 
 void client(int numbytes, int sockfd, user_t my_login, acc_t my_bal){
 	int selection;
-	
+	bool not_exit = true;
 	welcome();
 	get_login(my_login);
 	send_login(my_login, sockfd);
 	authentication(numbytes, sockfd, my_login);
 	
-	
-	 
+	while(not_exit){
 		selection = option_select();
+		send_menu_select(selection, sockfd);
 		switch(selection){
-			case 1: show_balance(my_login, sockfd, numbytes, my_bal);
-					break;
-			
+			case 1: 
+				test_function(selection, sockfd, numbytes);
+				break;
+			case 2: 
+				test_function(selection, sockfd, numbytes);
+				break;
+			case 3:
+				test_function(selection, sockfd, numbytes);
+				break;
+			case 4: 
+				test_function(selection, sockfd, numbytes);
+				break;
+			case 5: 
+				test_function(selection, sockfd, numbytes);
+				break;
+			case 6:
+				not_exit = false;
+				break;
 			
 		}  
+	}
 	
 	
 }

@@ -21,9 +21,10 @@ void send_login(user_t my_login, int sockfd);
 void authentication(int numbytes, int sockfd, user_t my_login);
 void menu(void);
 int option_select(void);
+void send_menu_select(int selection, int sockfd);
 void exit_client(void);
 void client(int numbytes, int sockfd, user_t my_login, acc_t my_bal);
-
+void test_function(int selection, int sockfd, int numbytes);
 
 
 
