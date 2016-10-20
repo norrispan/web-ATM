@@ -16,50 +16,29 @@
 #include <arpa/inet.h>
 #include <netdb.h> 
 
-
-
+void fix(char *a){
+	
+	
+	*(a + strlen(a) - 1) = '\0';
+	*(a + strlen(a)) = 0;
+}
 int main(){
 	char *a = malloc(10 * sizeof(char));
-
+char *b = malloc(10 * sizeof(char));
 	printf("\nenter something:");
 
-	gets(a);
-	bool has_char = false;
+	fgets(a, 10 * sizeof(char), stdin);
 	
-	for(int i = 0; i < strlen(a); i++){
-		if(*(a + i) == 46){
-			if(i == strlen(a) - 1 - 2 || i == strlen(a) - 1 - 1){
-				
-			}
-			else{
-				has_char = true;
-				break;
-			}
-				
-		}
-		
-		if(*(a + i) >= 48 && *(a + i) <= 57 || *(a + i) == 46){
-			
-		}
-		else{
-			has_char = true;
-			break;
-		}
+	for(int i = 0; i < 10; i++){
+		printf("\n%c", *(a + i));
 	}
+	//printf("\nstart    %s   %d\n", a, strlen(a));
 	
-	if(has_char){
-		printf("\nnot correct");
-		
-	}
-	else{
-		printf("\nOKKKKK");
-	}
+	fix(a);
 	
+
+	printf("\n%s   %d\n", a, strlen(a));
 	
-	printf("\n%f   %d\n", atof(a), strlen(a));
-	while(!getchar()){
-		
-	}
 	
 	return 0;
 }

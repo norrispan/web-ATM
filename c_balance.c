@@ -7,11 +7,12 @@
 
 int get_selection(int num_of_account){
 	bool invalid = false; 
-	char *buffer = (char *)malloc(sizeof(char));
+	char *buffer = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	int selection;
 	do{
 		printf("\n\nEnter your selection (E/e to exit) - ");
-		gets(buffer);
+		fgets(buffer, DATA_BUF_SIZE * sizeof(char), stdin);
+		fix_string(buffer);
 		if(strlen(buffer) > 1){
 			printf("\nInvalid selection");
 			invalid = true;
@@ -136,11 +137,7 @@ void get_balance(int numbytes, int sockfd, char *close_bal, user_t my_login, int
 	printf("\nAccount Name - %s %s\n", my_login.first_name, my_login.last_name);
 	printf("\nCurrent balance for Account %s : $%s\n", my_login.accounts[account_type_no], close_bal);
 	printf("\n\n=======================================================\n");
-	printf("\n\nPress any key to return...");
-	//while(!getchar()){
-		
-	//}	
-	//fflush(stdin);	
+	
 	
 }
 

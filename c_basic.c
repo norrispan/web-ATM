@@ -6,6 +6,13 @@
 #include "c_withdraw_h.h"
 
 
+
+void fix_string(char *str){
+	
+	*(str + strlen(str) - 1) = '\0';
+	*(str + strlen(str)) = 0;
+}
+
 void welcome(){
 	printf("========================================");
 	printf("\n\n\n\nWelcome to the Online ATM System\n\n\n\n");
@@ -50,11 +57,15 @@ void send_login(user_t my_login, int sockfd){
 }
 
 void get_login(user_t my_login){
+
 	printf("\n\nYou are required to logon with your registered Username and PIN\n\n");
 	printf("Please enter your username -->");
-	gets(my_login.username);
+	fgets(my_login.username, DATA_BUF_SIZE * sizeof(char), stdin);
+	fix_string(my_login.username);
 	printf("Please enter your pin -->");
-	gets(my_login.pin);
+	fgets(my_login.pin, DATA_BUF_SIZE * sizeof(char), stdin);
+	fix_string(my_login.pin);
+	
 }
 
 void menu(){
@@ -69,12 +80,13 @@ void menu(){
 
 int option_select(){
 	bool invalid;
-	char *buffer = (char *)malloc(sizeof(char));
+	char *buffer = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	int selection;
 	do{
 		menu();
 		printf("\n\nSelection option 1-6  ->");
-		gets(buffer);
+		fgets(buffer, DATA_BUF_SIZE * sizeof(char), stdin);
+		fix_string(buffer);
 		if(strlen(buffer) > 1){
 			printf("\nInvalid selection");
 			invalid = true;
@@ -114,38 +126,35 @@ void exit_client(){
 
 void client(int numbytes, int sockfd, user_t my_login, acc_t my_bal){
 	int selection;
-	bool not_exit = true;
+	
 	welcome();
 	get_login(my_login);
 	send_login(my_login, sockfd);
 	authentication(numbytes, sockfd, my_login);
-	
-	while(not_exit){
-		//system("clear");
-		selection = option_select();
-		send_menu_select(selection, sockfd);
-		switch(selection){
-			case 1: 
-				show_balance(my_login, sockfd, numbytes, my_bal);
-				break;
-			case 2: 
-				make_withdraw(my_login, sockfd, numbytes, my_bal);
-				break;
-			case 3:
+	selection = option_select();
+	send_menu_select(selection, sockfd);
+	switch(selection){
+		case 1: 
+			show_balance(my_login, sockfd, numbytes, my_bal);
+			break;
+		case 2: 
+			make_withdraw(my_login, sockfd, numbytes, my_bal);
+			break;
+		case 3:
 				
-				break;
-			case 4: 
+			break;
+		case 4: 
 			
-				break;
-			case 5: 
+			break;
+		case 5: 
 		
-				break;
-			case 6:
-				not_exit = false;
-				break;
+			break;
+		case 6:
+				
+			break;
 			
 		}  
-	}
+	
 	
 	
 }

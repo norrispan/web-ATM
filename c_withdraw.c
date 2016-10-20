@@ -57,7 +57,8 @@ char *get_withdraw_amount(){
 	char *amount = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	do{
 		printf("\nEnter the amount to withdraw (E/e to exit) : $");
-		gets(amount);
+		fgets(amount, DATA_BUF_SIZE * sizeof(char), stdin);
+		fix_string(amount);
 		for(int i = 0; i < strlen(amount); i++){
 			if(*(amount + i) == DOT){
 				if(i == strlen(amount) - 1 - 2 || i == strlen(amount) - 1 - 1){	
@@ -145,10 +146,7 @@ void withdraw(int sockfd, char *amount, acc_t my_bal){
 	}
 	printf("\n\nWithdraw Completed: Closing balance: $%s", my_bal.close_bal);
 	printf("\n\n=======================================================\n");
-	printf("\n\nPress any key to return...");
-	//while(!getchar()){	
-	//}	
-	//fflush(stdin);	
+	
 }
 
 void send_wd_fail(int sockfd){
@@ -156,12 +154,9 @@ void send_wd_fail(int sockfd){
 		perror("send");
 	}
 	printf("\n\nInsufficient Funds - Unable to process request");
-	printf("\n\nPress any key to return...");
+
 	printf("\n\n=======================================================\n");
-	//while(!getchar()){
-	//	
-	//}
-	//fflush(stdin);	
+	
 }
 
 void make_withdraw(user_t my_login, int sockfd, int numbytes, acc_t my_bal){
@@ -177,6 +172,7 @@ void make_withdraw(user_t my_login, int sockfd, int numbytes, acc_t my_bal){
 
 	update_balance(sockfd, numbytes, selection, my_bal.close_bal, my_login);
 	amount = get_withdraw_amount(sockfd, selection, my_bal.close_bal);
+	
 
 	if(wd_over_limit(amount, my_bal, acc_id)){
 		

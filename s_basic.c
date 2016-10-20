@@ -236,24 +236,21 @@ void handle_client(thread_data_t *thr_data){
 	if(authentication(thr_data->data_mutex, thr_data->numbytes, thr_data->new_fd, thr_data->user_login_list, thr_data->login_input)){
 		online = true;
 	}
-	while(online){
+	if(online){
 		selection = 0;
 		selection = recv_selection(thr_data->numbytes, thr_data->new_fd);
-		if(selection == 0){
-			online = false;
-			break;
-		}
-		if(selection == 1){
-			
-			if(handle_bal_enquiry(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input) == FAIL){
-				online = false;
+		switch (selection){
+			case 0:
 				break;
-			}
+			case 1:
+				if(handle_bal_enquiry(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input) == FAIL){
+				}
+				break;
+			case 2:
+				recv_test(thr_data->numbytes, thr_data->new_fd);
+				break;
 			
 			
-		}
-		if(selection == 2){
-			recv_test(thr_data->numbytes, thr_data->new_fd);
 		}
 		
 	}

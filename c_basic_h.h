@@ -14,7 +14,7 @@
 #include "data.h"
 
 
-
+void fix_string(char *str);
 void welcome(void);
 void get_login(user_t my_login);
 void send_login(user_t my_login, int sockfd);

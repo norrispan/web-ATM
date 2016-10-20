@@ -29,8 +29,8 @@
 #include <arpa/inet.h>
 #include <netdb.h> 
        
-#define LINE_BUF_SIZE 100     
-#define DATA_BUF_SIZE 10
+#define LINE_BUF_SIZE 200    
+#define DATA_BUF_SIZE 50
 
 #define FAIL 0
 #define SUCCESS 1
