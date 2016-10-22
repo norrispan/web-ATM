@@ -1,11 +1,11 @@
 #ifndef __C_WITHDRAW_H_H__
-#define __C_WITHDRAW_H_H__ 
+#define __C_WITHDRAW_H_H__
 
 
-/* 
+/*
 
-	Author: PAN Ningyuan 
-	Date: October 2016 
+	Author: PAN Ningyuan
+	Date: October 2016
 
 */
 
@@ -23,9 +23,9 @@ int convert_wd(user_t my_login, int selection);
 
 void update_balance(int sockfd, int numbytes, int selection, char *close_bal, user_t my_login);
 
-bool wd_over_limit(char *amount, acc_t my_bal, int acc_id);
+int wd_over_limit(char *amount, acc_t my_bal, int acc_id);
 
-void withdraw(int sockfd, char *amount, acc_t my_bal);
+void withdraw(int numbytes, int sockfd, char *amount, acc_t my_bal);
 
 void send_wd_fail(int sockfd);
 

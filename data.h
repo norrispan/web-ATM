@@ -1,42 +1,42 @@
 #ifndef __DATA_H__
-#define __DATA_H__ 
+#define __DATA_H__
 
-/* 
+/*
 
-	Author: PAN Ningyuan 
-	Date: September 2016 
+	Author: PAN Ningyuan
+	Date: September 2016
 
 */
 
 
 
-#include <stdio.h>      
-#include <stdlib.h> 
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <strings.h>
-#include <stddef.h> 
+#include <stddef.h>
 #include <stdbool.h>
 #include <signal.h>
-#include <unistd.h>    
+#include <unistd.h>
 #include <time.h>
-#include <pthread.h> 
+#include <pthread.h>
 #include <semaphore.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <netinet/in.h> 
-#include <sys/wait.h> 
-#include <errno.h> 
+#include <netinet/in.h>
+#include <sys/wait.h>
+#include <errno.h>
 #include <arpa/inet.h>
-#include <netdb.h> 
-       
-#define LINE_BUF_SIZE 200    
-#define DATA_BUF_SIZE 50
+#include <netdb.h>
 
-#define FAIL 0
+#define LINE_BUF_SIZE 200
+#define DATA_BUF_SIZE 100
+
+#define FAIL -1
 #define SUCCESS 1
 
-#define FAIL_SIGNAL "0"
-#define SUCCESS_SIGNAL "1"
+#define FAIL_SIGNAL "f"
+#define SUCCESS_SIGNAL "s"
 
 #define DOT 46
 #define ZERO 48
@@ -89,20 +89,20 @@ struct acc_node{
 typedef struct request request_t;
 struct request {
 	int request_num;
-    int new_fd;           
-    request_t* next;   
+    int new_fd;
+    request_t* next;
 };
 
 
 typedef struct thread_data thread_data_t;
 struct thread_data{
-	int numbytes; 
-	int new_fd; 
+	int numbytes;
+	int new_fd;
 	user_t login_input;
 	user_node_t *user_login_list;
 	acc_node_t *acc_bal_list;
 	pthread_mutex_t *data_mutex;
-	
+
 };
 
 
