@@ -67,6 +67,7 @@ void print_acct_bal(user_t my_login, int num){
 
 int balance_menu(user_t my_login){
 	int num_of_account = 0;
+	printf("\n\n========================================================");
 	printf("\n\n\n\nSelect Account Type");
 	for(int i = 0; i < ACCOUNT_TYPE_NUM; i++){
 		if(atoi(my_login.accounts[i]) != 0){
@@ -126,10 +127,10 @@ void get_balance(int numbytes, int sockfd, char *close_bal, user_t my_login, int
 	int account_type_no;
 	account_type_no = convert_bal(my_login, selection);
 
-	printf("\n\n=======================================================\n");
+	printf("\n\n========================================================\n");
 	printf("\nAccount Name - %s %s\n", my_login.first_name, my_login.last_name);
 	printf("\nCurrent balance for Account %s : $%s\n", my_login.accounts[account_type_no], close_bal);
-	printf("\n\n=======================================================\n");
+	printf("\n\n========================================================\n");
 
 
 }

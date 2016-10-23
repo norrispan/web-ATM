@@ -105,27 +105,16 @@ int convert_wd(user_t my_login, int selection){
 
 }
 
-void update_balance(int sockfd, int numbytes, int selection, char *close_bal, user_t my_login){
+void send_bal_acc(int sockfd, int numbytes, int selection, char *close_bal, user_t my_login){
 	int account_type_no;
 	printf("\nselection %d\n", selection);
 	account_type_no = convert_wd(my_login, selection);
-
-
 	char *account_type = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
-
 	snprintf(account_type, DATA_BUF_SIZE, "%d", account_type_no);
 	printf("\nconvert %s\n", account_type);
 	if (send(sockfd, account_type, DATA_BUF_SIZE * sizeof(char), 0) == -1){
 		perror("send");
 	}
-
-	if ((numbytes = recv(sockfd, close_bal, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
-		perror("recv");
-	}
-	printf("\n\n=======================================================\n");
-	printf("\nAccount Name - %s %s\n", my_login.first_name, my_login.last_name);
-	printf("\nCurrent balance for Account %s : $%s\n", my_login.accounts[account_type_no], close_bal);
-	printf("\n\n=======================================================\n");
 
 }
 
@@ -157,7 +146,7 @@ void withdraw(int numbytes, int sockfd, char *amount, acc_t my_bal){
 		perror("recv");
 	}
 	printf("\n\nWithdraw Completed: Closing balance: $%s", my_bal.close_bal);
-	printf("\n\n=======================================================\n");
+	printf("\n\n======================================================================================\n");
 
 }
 
@@ -178,7 +167,7 @@ void make_withdraw(user_t my_login, int sockfd, int numbytes, acc_t my_bal){
 	selection = get_selection(num_of_account);
 	acc_id = convert_wd(my_login, selection);
 
-	update_balance(sockfd, numbytes, selection, my_bal.close_bal, my_login);
+	send_bal_acc(sockfd, numbytes, selection, my_bal.close_bal, my_login);
 	amount = get_withdraw_amount(sockfd, selection, my_bal.close_bal);
 
 	over_limit = wd_over_limit(amount, my_bal, acc_id);
@@ -186,12 +175,12 @@ void make_withdraw(user_t my_login, int sockfd, int numbytes, acc_t my_bal){
 		case -1:
 			send_wd_fail(sockfd);
 			printf("\n\nAmount must be greater than 0.00");
-			printf("\n\n=======================================================\n");
+			printf("\n\n========================================================\n");
 			break;
 		case 0:
 			send_wd_fail(sockfd);
 			printf("\n\nInsufficient Funds - Unable to process request");
-			printf("\n\n=======================================================\n");
+			printf("\n\n========================================================\n");
 			break;
 		case 1:
 			withdraw(numbytes, sockfd, amount, my_bal);

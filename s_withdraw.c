@@ -71,9 +71,6 @@ int handle_withdraw(int numbytes, int new_fd, acc_node_t *acc_bal_list, user_t l
 		return FAIL;
 	}
 
-	if(handle_bal_enquiry(numbytes, new_fd, acc_bal_list, login_input, acc_type) == FAIL){
-		return FAIL;
-	}
 	if(deduction(numbytes, new_fd, acc_bal_list, login_input, acc_type, tran_record_list) == FAIL){
 		return FAIL;
 	}
