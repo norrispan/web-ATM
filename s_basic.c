@@ -210,7 +210,7 @@ int recv_selection(int numbytes, int new_fd){
 	int selection = atoi(select_buf);
 	free(select_buf);
 	select_buf = NULL;
-	printf("\n%d\n", selection);
+	//printf("\n%d\n", selection);
 	return selection;
 }
 
@@ -245,9 +245,6 @@ void handle_client(thread_data_t *thr_data){
 	}
 	acc_node_t *temp_list;
 	temp_list = thr_data->acc_bal_list;
-	for( ; temp_list != NULL; temp_list = temp_list->next){
-		printf("\n%s      %s\n", temp_list->account_detail->acc_no, temp_list->account_detail->close_bal);
-	}
 	printf("\nclient exit\n");
 
 

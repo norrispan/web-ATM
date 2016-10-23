@@ -48,36 +48,43 @@ int withdraw_menu(user_t my_login){
 
 char *get_withdraw_amount(){
 	bool invalid = false;
+	bool zero = false;
 	char *amount = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	do{
-		invalid = false;
-		printf("\nEnter the amount to withdraw (E/e to exit) : $");
-		fgets(amount, DATA_BUF_SIZE * sizeof(char), stdin);
-		fix_string(amount);
-		printf("\n%lf\n", atof(amount));
-		for(int i = 0; i < strlen(amount); i++){
-			if(*(amount + i) >= ZERO && *(amount + i) <= NINE || *(amount + i) == DOT){
-
-			}
-			else{
-				printf("\nPlease enter a valid amount\n");
-				invalid = true;
-				break;
-			}
-		}
-		for(int i = 0; i < strlen(amount); i++){
-			if(*(amount + i) == DOT){
-				if(i == strlen(amount) - 1 - 2 || i == strlen(amount) - 1 - 1){
+		zero = false;
+		do{
+			invalid = false;
+			printf("\nEnter the amount to withdraw (E/e to exit) : $");
+			fgets(amount, DATA_BUF_SIZE * sizeof(char), stdin);
+			fix_string(amount);
+			for(int i = 0; i < strlen(amount); i++){
+				if(*(amount + i) >= ZERO && *(amount + i) <= NINE || *(amount + i) == DOT){
 
 				}
 				else{
-					printf("\nPlease enter a correct amount\n");
+					printf("\nPlease enter a valid amount\n");
 					invalid = true;
 					break;
 				}
 			}
+			for(int i = 0; i < strlen(amount); i++){
+				if(*(amount + i) == DOT){
+					if(i == strlen(amount) - 1 - 2 || i == strlen(amount) - 1 - 1){
+
+					}
+					else{
+						printf("\nPlease enter a correct amount\n");
+						invalid = true;
+						break;
+					}
+				}
+			}
+		}while(invalid);
+		if(atof(amount) == 0){
+			printf("\nAmount must be greater than zero\n");
+			zero = true;
 		}
-	}while(invalid);
+	}while(zero);
 	return amount;
 }
 
