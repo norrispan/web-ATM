@@ -1,11 +1,11 @@
 #ifndef __S_BASIC_H_H__
-#define __S_BASIC_H_H__ 
+#define __S_BASIC_H_H__
 
 
-/* 
+/*
 
-	Author: PAN Ningyuan 
-	Date: September 2016 
+	Author: PAN Ningyuan
+	Date: September 2016
 
 */
 
@@ -17,7 +17,6 @@ void sort_account(char *accounts[]);
 
 user_node_t *get_user_details();
 
-void signal_handler(int signal);
 
 void argument_check(int argc, char *argv[], short my_port);
 

@@ -20,8 +20,8 @@ acc_node_t *get_account_details(){
 				acc_node_t *new = (acc_node_t *)malloc(sizeof(acc_node_t));
 				new->account_detail = (acc_t *)malloc(sizeof(acc_t));
 				new->account_detail->acc_no = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
-				new->account_detail->open_bal = (char *)malloc(LINE_BUF_SIZE * sizeof(char));
-				new->account_detail->close_bal = (char *)malloc(LINE_BUF_SIZE * sizeof(acc_t));
+				new->account_detail->open_bal = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+				new->account_detail->close_bal = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 
 				fgets(line, LINE_BUF_SIZE * sizeof(char),file);
 				sscanf(line, "%s", new->account_detail->acc_no);

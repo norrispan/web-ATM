@@ -4,6 +4,7 @@
 #include "s_basic_h.h"
 #include "s_balance_h.h"
 #include "s_withdraw_h.h"
+#include "s_deposit_h.h"
 /*
 
 	Author: PAN Ningyuan
@@ -111,13 +112,6 @@ user_node_t *get_user_details(){
 	return user_list;
 }
 
-void signal_handler(int signal){
-	if(signal == SIGINT){
-		//free everything
-		printf("\nexit");
-		exit(0);
-	}
-}
 
 void argument_check(int argc, char *argv[], short my_port){
 	if(argv[1] != NULL){
@@ -236,7 +230,7 @@ void handle_client(thread_data_t *thr_data){
 				}
 				break;
 			case 2:
-				if(handle_withdraw(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input) == FAIL){
+				if(handle_withdraw(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, thr_data->tran_record_list) == FAIL){
 					break;
 				}
 				break;

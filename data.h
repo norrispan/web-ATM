@@ -42,6 +42,10 @@
 #define ZERO 48
 #define NINE 57
 
+#define DEPOSIT "2"
+#define WITHDRAW "3"
+#define TRANSFER "4"
+
 #define ACCOUNT_TYPE_NUM 3
 #define SAVING 0
 #define LOAN 1
@@ -86,6 +90,21 @@ struct acc_node{
 	acc_node_t *next;
 };
 
+typedef struct tran tran_t;
+struct tran{
+	char from[DATA_BUF_SIZE];
+	char to[DATA_BUF_SIZE];
+	char type[DATA_BUF_SIZE];
+	char amount[DATA_BUF_SIZE];
+};
+
+typedef struct tran_node tran_node_t;
+struct tran_node{
+	tran_t* record;
+	tran_node_t* next;
+};
+
+
 typedef struct request request_t;
 struct request {
 	int request_num;
@@ -101,9 +120,15 @@ struct thread_data{
 	user_t login_input;
 	user_node_t *user_login_list;
 	acc_node_t *acc_bal_list;
+	tran_node_t *tran_record_list;
 	pthread_mutex_t *data_mutex;
 
 };
+
+
+
+
+
 
 
 
