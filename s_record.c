@@ -31,16 +31,15 @@ void write_record(tran_node_t *tran_record_list){
 
 void write_bal_record(acc_node_t *acc_bal_list){
     FILE *file = fopen("acc.txt", "w");
+    fprintf(file, "AccountNo      OpeningBal     ClosingBal\n");
     for(; acc_bal_list != NULL; acc_bal_list = acc_bal_list->next){
 
-        fwrite(acc_bal_list->account_detail->acc_no, strlen(acc_bal_list->account_detail->acc_no), sizeof(char), file);
-        fwrite("       ", sizeof(char), 7, file);
-        fwrite(acc_bal_list->account_detail->open_bal, strlen(acc_bal_list->account_detail->open_bal), sizeof(char), file);
-        fwrite("       ", sizeof(char), 7, file);
-        fwrite(acc_bal_list->account_detail->close_bal, strlen(acc_bal_list->account_detail->close_bal), sizeof(char), file);
+        fprintf(file, "%s        ", acc_bal_list->account_detail.acc_no);
 
-        fwrite("\n", sizeof(char), 1, file);
+        fprintf(file, "%s        ", acc_bal_list->account_detail.open_bal);
+
+        fprintf(file, "%s\n", acc_bal_list->account_detail.close_bal);
+
     }
-    fflush(file);
     fclose(file);
 }
