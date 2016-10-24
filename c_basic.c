@@ -147,7 +147,7 @@ void client(int numbytes, int sockfd, user_t my_login, acc_t my_bal){
 			make_deposit(my_login, sockfd, numbytes, my_bal);
 			break;
 		case 4:
-
+			make_transfer(my_login, sockfd, numbytes, my_bal);
 			break;
 		case 5:
 

@@ -7,3 +7,7 @@
 #include "s_deposit_h.h"
 #include "s_transfer_h.h"
 #include "s_record_h.h"
+
+int handle_transfer(){
+    
+}

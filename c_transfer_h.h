@@ -12,7 +12,10 @@
 
 
 #include "data.h"
+int get_origin(int num_of_account);
 
+
+int make_transfer(user_t my_login, int sockfd, int numbytes, acc_t my_bal);
 
 
 

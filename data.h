@@ -54,6 +54,7 @@
 #define SAVING 0
 #define LOAN 1
 #define CREDIT 2
+#define EXTERNAL 3
 #define SAVING_ID_NUM 11
 #define LOAN_ID_NUM 12
 #define CREDIT_ID_NUM 13
