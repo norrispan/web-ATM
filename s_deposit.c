@@ -8,18 +8,8 @@
 #include "s_record_h.h"
 
 
-int handle_deposit(int numbytes, int new_fd, acc_node_t *acc_bal_list, user_t login_input, tran_node_t *tran_record_list){
-    int acc_type;
-    acc_type = recv_account_type(numbytes, new_fd, login_input);
-    if(acc_type == FAIL){
-        return FAIL;
-    }
-
-    char *amount;
-    amount = recv_amount(numbytes, new_fd, acc_bal_list, login_input);
-    if(strcmp(amount, FAIL_SIGNAL) == 0){
-        return FAIL;
-    }
+int handle_deposit(int numbytes, int new_fd, acc_node_t *acc_bal_list, user_t login_input, tran_node_t *tran_record_list, char* amount, int acc_type){
+    
     bool is_match = false;
     char new_bal_buf[DATA_BUF_SIZE];
     float new_balance;

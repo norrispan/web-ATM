@@ -143,7 +143,7 @@ void make_withdraw(user_t my_login, int sockfd, int numbytes, acc_t my_bal){
 	selection = get_selection(num_of_account);
 	acc_type_no = convert_wd(my_login, selection);
 
-	send_acc_select(my_login, selection, sockfd, acc_type_no);
+	send_acc_select(my_login, sockfd, acc_type_no);
 	amount = get_withdraw_amount();
 	send_amount(sockfd, amount);
 

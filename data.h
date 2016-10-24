@@ -40,6 +40,8 @@
 #define MENU_SIGNAL "M"
 #define ACC_TYPE_SIGNAL "A"
 #define AMOUNT_SIGNAL "$"
+#define ORIGIN "O"
+#define DEST "D"
 #define EXIT_SIGNAL "E"
 
 #define DOT 46

@@ -103,7 +103,7 @@ int convert_bal(user_t my_login, int selection){
 	return account_type_no;
 }
 
-int send_acc_select(user_t my_login, int selection, int sockfd, int account_type_no){
+int send_acc_select(user_t my_login, int sockfd, int account_type_no){
 	char account_type[DATA_BUF_SIZE];
 	snprintf(account_type, DATA_BUF_SIZE, "%d", account_type_no);
 	strcat(account_type, ",");
@@ -115,7 +115,7 @@ int send_acc_select(user_t my_login, int selection, int sockfd, int account_type
 	return SUCCESS;
 }
 
-void get_balance(int numbytes, int sockfd, char *close_bal, user_t my_login, int selection){
+void get_balance(int numbytes, int sockfd, char *close_bal, user_t my_login){
 	if ((numbytes = recv(sockfd, close_bal, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
 		perror("recv");
 	}
@@ -137,6 +137,6 @@ void show_balance(user_t my_login, int sockfd, int numbytes, acc_t my_bal){
 	num_of_account = balance_menu(my_login);
 	selection = get_selection(num_of_account);
 	acc_type_no = convert_bal(my_login, selection);
-	send_acc_select(my_login, selection, sockfd, acc_type_no);
-	get_balance(numbytes, sockfd, my_bal.close_bal, my_login, selection);
+	send_acc_select(my_login, sockfd, acc_type_no);
+	get_balance(numbytes, sockfd, my_bal.close_bal, my_login);
 }

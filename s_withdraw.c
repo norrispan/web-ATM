@@ -16,7 +16,7 @@ void set_precision(char str[]){
 	}
 }
 
-char *recv_amount(int numbytes, int new_fd, acc_node_t *acc_bal_list, user_t login_input){
+char *recv_amount(int numbytes, int new_fd){
 	char *amount = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	if ((numbytes = recv(new_fd, amount, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
 		return FAIL_SIGNAL;
@@ -43,20 +43,9 @@ char *recv_amount(int numbytes, int new_fd, acc_node_t *acc_bal_list, user_t log
 	return temp;
 }
 
-int handle_withdraw(int numbytes, int new_fd, acc_node_t *acc_bal_list, user_t login_input, tran_node_t *tran_record_list){
-	char *amount;
+int handle_withdraw(int numbytes, int new_fd, acc_node_t *acc_bal_list, user_t login_input, tran_node_t *tran_record_list, char* amount, int acc_type){
+
 	char new_bal_buf[DATA_BUF_SIZE];
-	int acc_type;
-	acc_type = recv_account_type(numbytes, new_fd, login_input);
-	if(acc_type == FAIL){
-		return FAIL;
-	}
-	amount = recv_amount(numbytes, new_fd, acc_bal_list, login_input);
-	if(strcmp(amount, FAIL_SIGNAL) == 0){
-		return FAIL;
-	}
-	printf("\n%d\n", acc_type);
-	printf("\n%s\n", amount);
 	bool is_match = false;
 	float new_balance;
 	acc_node_t *temp_list;

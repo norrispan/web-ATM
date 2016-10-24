@@ -60,7 +60,6 @@ int recv_account_type(int numbytes, int new_fd, user_t login_input){
 	}
 
 	bool invalid = true;
-	printf("\n%s\n", account_type);
 	if(account_type[0] >= 48 && account_type[0] <= 50 && account_type[1] == ',' && account_type[2] == 'A'){
 		invalid = false;
 	}

@@ -69,10 +69,10 @@ int get_dest(int dest_status){
 					if(selection == 1){
 						selection = LOAN;
 					}
-					if(selection == 2){
+					else if(selection == 2){
 						selection = CREDIT;
 					}
-					if(selection == 3){
+					else{
 						selection = EXTERNAL;
 					}
 
@@ -86,7 +86,7 @@ int get_dest(int dest_status){
 					if(selection == 1){
 						selection = LOAN;
 					}
-					if(selection == 2){
+					else if(selection == 2){
 						selection = EXTERNAL;
 					}
 				}
@@ -99,7 +99,7 @@ int get_dest(int dest_status){
 					if(selection == 1){
 						selection = CREDIT;
 					}
-					if(selection == 2){
+					else{
 						selection = EXTERNAL;
 					}
 				}
@@ -112,10 +112,10 @@ int get_dest(int dest_status){
 					if(selection == 1){
 						selection = SAVING;
 					}
-					if(selection == 2){
+					else if(selection == 2){
 						selection = LOAN;
 					}
-					if(selection == 3){
+					else{
 						selection = EXTERNAL;
 					}
 
@@ -127,14 +127,26 @@ int get_dest(int dest_status){
 				}
 				else{
 					if(selection == 1){
-						selection = LOAN;
+						selection = SAVING;
 					}
-					if(selection == 2){
+					else{
 						selection = EXTERNAL;
 					}
 				}
 			}
-
+			if(dest_status == 8){
+				if(selection < 1 || selection > 2){
+					invalid = true;
+				}
+				else{
+					if(selection == 1){
+						selection = LOAN;
+					}
+					else{
+						selection = EXTERNAL;
+					}
+				}
+			}
 		}
 	}while(invalid);
 	return selection;
@@ -180,17 +192,119 @@ int dest_menu(user_t my_login, int origin_acct){
 					printf("\n3. External Account");
 					return 6;
 				}
+				else{
+					printf("\n2. External Account");
+					return 7;
+				}
+
 			}
 			else{
 				if(atoi(my_login.accounts[LOAN]) != 0){
 					printf("\n1. Loan Account");
 					printf("\n2. External Account");
-					return 7;
+					return 8;
 				}
 			}
 			break;
 		}
 
+}
+
+char *get_tran_amount(){
+	bool invalid = false;
+	bool zero = false;
+	char *amount = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+	do{
+		zero = false;
+		do{
+			invalid = false;
+			printf("\nEnter the amount to transfer (E/e to exit) : $");
+			fgets(amount, DATA_BUF_SIZE * sizeof(char), stdin);
+			fix_string(amount);
+			for(int i = 0; i < strlen(amount); i++){
+				if(*(amount + i) >= ZERO && *(amount + i) <= NINE || *(amount + i) == DOT){
+
+				}
+				else{
+					printf("\nPlease enter a valid amount\n");
+					invalid = true;
+					break;
+				}
+			}
+			for(int i = 0; i < strlen(amount); i++){
+				if(*(amount + i) == DOT){
+					if(i == strlen(amount) - 1 - 2 || i == strlen(amount) - 1 - 1){
+
+					}
+					else{
+						printf("\nPlease enter a correct amount\n");
+						invalid = true;
+						break;
+					}
+				}
+			}
+		}while(invalid);
+		if(atof(amount) == 0){
+			printf("\nAmount must be greater than zero\n");
+			zero = true;
+		}
+	}while(zero);
+	return amount;
+}
+
+int send_acc_no(user_t my_login, int sockfd, int account_type_no, char *status){
+	char account_type[DATA_BUF_SIZE];
+	snprintf(account_type, DATA_BUF_SIZE, "%d", account_type_no);
+	strcat(account_type, ",");
+	strcat(account_type, ACC_TYPE_SIGNAL);
+	strcat(account_type, status);
+	if (send(sockfd, account_type, DATA_BUF_SIZE * sizeof(char), 0) == -1){
+		perror("send");
+		return FAIL;
+	}
+	return SUCCESS;
+}
+
+int recv_internal(int origin_acct, int dest_acct, int sockfd, int numbytes, char *amount, user_t my_login){
+	char origin_bal[DATA_BUF_SIZE];
+	char dest_bal[DATA_BUF_SIZE];
+	if ((numbytes = recv(sockfd, origin_bal, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
+		return FAIL;
+	}
+	if ((numbytes = recv(sockfd, dest_bal, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
+		return FAIL;
+	}
+	printf("\n%s    %s\n", origin_bal, dest_bal);
+	if(strcmp(origin_bal, FAIL_SIGNAL) == 0 || strcmp(dest_bal, FAIL_SIGNAL) == 0 ){
+		return FAIL;
+	}
+	else{
+		printf("\n\n\nINTERNAL TRANSFER\n\n");
+		printf("Deducted $%s From: Account %s - Closing Balance -$%s", amount, my_login.accounts[origin_acct], origin_bal);
+		printf("\nTransfer $%s to: Account %s - Closing Balance -$%s", amount, my_login.accounts[dest_acct], dest_bal);
+		return SUCCESS;
+	}
+}
+
+void internal_tran(int origin_acct, int dest_acct, user_t my_login, int sockfd, int numbytes){
+	char *amount;
+	send_acc_no(my_login, sockfd, origin_acct, ORIGIN);
+	send_acc_no(my_login, sockfd, dest_acct, DEST);
+
+	amount = get_tran_amount();
+	send_amount(sockfd, amount);
+
+	if(recv_internal(origin_acct, dest_acct, sockfd, numbytes, amount, my_login) == FAIL){
+		printf("\n\n\nINTERNAL TRANSFER\n\n");
+		printf("\n\nInsufficiant Funds - Unable to proccess request");
+		printf("\n\n========================================================\n");
+	}
+}
+
+void send_tran_select(char *status, int sockfd){
+	if (send(sockfd, status, DATA_BUF_SIZE * sizeof(char), 0) == -1){
+		perror("send");
+	}
 }
 
 int make_transfer(user_t my_login, int sockfd, int numbytes, acc_t my_bal){
@@ -207,5 +321,13 @@ int make_transfer(user_t my_login, int sockfd, int numbytes, acc_t my_bal){
 	origin_acct = convert_wd(my_login, origin_select);
 	dest_status = dest_menu(my_login, origin_acct);
 	dest_acct = get_dest(dest_status);
-	printf("\n%d", dest_acct);
+	printf("\n%d   %d", origin_acct, dest_acct);
+
+	if(dest_acct == SAVING || dest_acct == LOAN || dest_acct == CREDIT){
+		send_tran_select("internal", sockfd);
+		internal_tran(origin_acct, dest_acct, my_login, sockfd, numbytes);
+	}
+	else{
+		send_tran_select("external", sockfd);
+	}
 }

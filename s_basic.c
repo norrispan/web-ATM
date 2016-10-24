@@ -5,6 +5,7 @@
 #include "s_balance_h.h"
 #include "s_withdraw_h.h"
 #include "s_deposit_h.h"
+#include "s_transfer_h.h"
 #include "s_record_h.h"
 /*
 
@@ -216,6 +217,7 @@ int recv_selection(int numbytes, int new_fd){
 void handle_client(thread_data_t *thr_data){
 	bool online = false;
 	int selection;
+	char *amount;
 	int acc_type;
 	if(authentication(thr_data->data_mutex, thr_data->numbytes, thr_data->new_fd, thr_data->user_login_list, thr_data->login_input) != FAIL){
 		online = true;
@@ -233,13 +235,35 @@ void handle_client(thread_data_t *thr_data){
 				}
 				break;
 			case 2:
-				if(handle_withdraw(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, thr_data->tran_record_list) == FAIL){
+
+				acc_type = recv_account_type(thr_data->numbytes, thr_data->new_fd, thr_data->login_input);
+				if(acc_type == FAIL){
+					break;
+				}
+				amount = recv_amount(thr_data->numbytes, thr_data->new_fd);
+				if(strcmp(amount, FAIL_SIGNAL) == 0){
+					break;
+				}
+				if(handle_withdraw(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, thr_data->tran_record_list, amount, acc_type) == FAIL){
 					printf("\nw fail\n");
 					break;
 				}
 				break;
 			case 3:
-				if(handle_deposit(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, thr_data->tran_record_list) == FAIL){
+				acc_type = recv_account_type(thr_data->numbytes, thr_data->new_fd, thr_data->login_input);
+				if(acc_type == FAIL){
+					break;
+				}
+				amount = recv_amount(thr_data->numbytes, thr_data->new_fd);
+				if(strcmp(amount, FAIL_SIGNAL) == 0){
+					break;
+				}
+				if(handle_deposit(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, thr_data->tran_record_list, amount, acc_type) == FAIL){
+					break;
+				}
+				break;
+			case 4:
+				if(handle_transfer(thr_data->numbytes, thr_data->new_fd, thr_data->login_input, thr_data->acc_bal_list, thr_data->tran_record_list) == FAIL){
 					break;
 				}
 				break;

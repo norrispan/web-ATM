@@ -15,8 +15,6 @@
 */
 int sockfd, numbytes;
 
-
-
 void signal_handler(int signal){
 	if(signal == SIGINT){
 		close(sockfd);
@@ -28,11 +26,8 @@ void signal_handler(int signal){
 
 
 int main(int argc, char *argv[]){
-
-
 	struct hostent *he;
 	struct sockaddr_in their_addr;
-
 
 	user_t my_login;
 	acc_t my_bal;
