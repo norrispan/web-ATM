@@ -10,7 +10,7 @@
 int deposit_menu(user_t my_login){
 	int num_of_account = 0;
 	printf("\n\n========================================================");
-	printf("\n\nYour daily deposit limit is $1000.00!");
+	printf("\n\nThe maximum daily deposit is $1000.00!");
 	printf("\n\n\n\nSelect Account Type");
 	for(int i = 0; i < ACCOUNT_TYPE_NUM; i++){
 		if(atoi(my_login.accounts[i]) != 0){
@@ -39,7 +39,6 @@ int deposit_menu(user_t my_login){
 	}
 	return num_of_account;
 }
-
 
 char *get_deposit_amount(){
 	bool invalid = false;
@@ -87,10 +86,7 @@ char *get_deposit_amount(){
 	return amount;
 }
 
-void deposit(int numbytes, int sockfd, char *amount, acc_t my_bal){
-	if (send(sockfd, amount, DATA_BUF_SIZE * sizeof(char), 0) == -1){
-		perror("send");
-	}
+void recv_deposit(int numbytes, int sockfd, char *amount, acc_t my_bal){
 	if ((numbytes = recv(sockfd, my_bal.close_bal, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
 		perror("recv");
 	}
@@ -102,13 +98,14 @@ void deposit(int numbytes, int sockfd, char *amount, acc_t my_bal){
 void make_deposit(user_t my_login, int sockfd, int numbytes, acc_t my_bal){
 	int num_of_account;
 	int selection;
-	char *amount;
 	int acc_type_no;
+	char *amount;
 
-	num_of_account = balance_menu(my_login);
+	num_of_account = deposit_menu(my_login);
 	selection = get_selection(num_of_account);
 	acc_type_no = convert_bal(my_login, selection);
-	//send_acc_select(my_login, selection, sockfd);
+	send_acc_select(my_login, selection, sockfd, acc_type_no);
 	amount = get_deposit_amount();
-	deposit(numbytes, sockfd, amount, my_bal);
+	send_amount(sockfd, amount);
+	recv_deposit(numbytes, sockfd, amount, my_bal);
 }

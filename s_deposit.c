@@ -8,11 +8,17 @@
 #include "s_record_h.h"
 
 
-int make_deposit(int numbytes, int new_fd, acc_node_t *acc_bal_list, user_t login_input, int acc_type, tran_node_t *tran_record_list){
+int handle_deposit(int numbytes, int new_fd, acc_node_t *acc_bal_list, user_t login_input, tran_node_t *tran_record_list){
+    int acc_type;
+    acc_type = recv_account_type(numbytes, new_fd, login_input);
+    if(acc_type == FAIL){
+        return FAIL;
+    }
+
     char *amount;
     amount = recv_amount(numbytes, new_fd, acc_bal_list, login_input);
     if(strcmp(amount, FAIL_SIGNAL) == 0){
-        return -1;
+        return FAIL;
     }
     bool is_match = false;
     char new_bal_buf[DATA_BUF_SIZE];
@@ -34,13 +40,12 @@ int make_deposit(int numbytes, int new_fd, acc_node_t *acc_bal_list, user_t logi
         //add_record(temp_list->account_detail->acc_no, temp_list->account_detail->acc_no, WITHDRAW, amount, tran_record_list);
 
         if (send(new_fd, temp_list->account_detail.close_bal, DATA_BUF_SIZE * sizeof(char), 0) == -1){
-            return -1;
+            return FAIL;
         }
-        return 1;
+        return SUCCESS;
     }
     else{
-
-        return -1;
+        return FAIL;
     }
 
 }

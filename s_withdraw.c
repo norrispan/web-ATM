@@ -83,16 +83,15 @@ int handle_withdraw(int numbytes, int new_fd, acc_node_t *acc_bal_list, user_t l
 		//add_record(temp_list->account_detail->acc_no, temp_list->account_detail->acc_no, WITHDRAW, amount, tran_record_list);
 		//printf("\n%s  %s  %s  %s\n", temp_list->account_detail->acc_no, temp_list->account_detail->acc_no, WITHDRAW, amount);
 		if (send(new_fd, temp_list->account_detail.close_bal, DATA_BUF_SIZE * sizeof(char), 0) == -1){
-			return -1;
+			return FAIL;
 		}
-		return 1;
+		return SUCCESS;
 	}
 	else{
 		if (send(new_fd, FAIL_SIGNAL, DATA_BUF_SIZE * sizeof(char), 0) == -1){
-			return -1;
+			return FAIL;
 		}
-		printf("%s", FAIL_SIGNAL);
-		return -1;
+		return FAIL;
 	}
 
 }

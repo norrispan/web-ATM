@@ -225,7 +225,6 @@ void handle_client(thread_data_t *thr_data){
 		selection = recv_selection(thr_data->numbytes, thr_data->new_fd);
 		switch (selection){
 			case FAIL:
-				printf("\nmenu fail\n");
 				break;
 			case 1:
 				if(handle_bal_enquiry(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input) == FAIL){
@@ -234,18 +233,13 @@ void handle_client(thread_data_t *thr_data){
 				}
 				break;
 			case 2:
-
 				if(handle_withdraw(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, thr_data->tran_record_list) == FAIL){
 					printf("\nw fail\n");
 					break;
 				}
 				break;
 			case 3:
-				if(acc_type = recv_account_type(thr_data->numbytes, thr_data->new_fd, thr_data->login_input) == FAIL){
-					printf("\nacc fail\n");
-					break;
-				}
-				if(make_deposit(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, acc_type, thr_data->tran_record_list) == FAIL){
+				if(handle_deposit(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, thr_data->tran_record_list) == FAIL){
 					break;
 				}
 				break;

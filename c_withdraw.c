@@ -105,7 +105,6 @@ int convert_wd(user_t my_login, int selection){
 
 }
 
-
 int send_amount(int sockfd, char *amount){
 	strcat(amount, ",");
 	strcat(amount, AMOUNT_SIGNAL);
@@ -139,14 +138,13 @@ void make_withdraw(user_t my_login, int sockfd, int numbytes, acc_t my_bal){
 	int selection;
 	int acc_type_no;
 	char *amount;
-	int over_limit = 0;
 
 	num_of_account = withdraw_menu(my_login);
 	selection = get_selection(num_of_account);
 	acc_type_no = convert_wd(my_login, selection);
 
 	send_acc_select(my_login, selection, sockfd, acc_type_no);
-	amount = get_withdraw_amount(sockfd, selection, my_bal.close_bal);
+	amount = get_withdraw_amount();
 	send_amount(sockfd, amount);
 
 	recv_withdraw(numbytes, sockfd, amount, my_bal);
