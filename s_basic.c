@@ -207,19 +207,10 @@ int recv_selection(int numbytes, int new_fd){
 		return FAIL;
 	}
 	char *temp;
-	bool correct = false;
     temp = strtok(select_buf,",");
 	int selection = atoi(temp);
-	temp = strtok(NULL,",");
-	if(strcmp(temp, MENU_SIGNAL) == 0){
-		correct = true;
-	}
-	if(correct){
-		return selection;
-	}
-	else{
-		return FAIL;
-	}
+	free(temp);
+	return selection;
 }
 
 void handle_client(thread_data_t *thr_data){
@@ -237,34 +228,30 @@ void handle_client(thread_data_t *thr_data){
 				printf("\nmenu fail\n");
 				break;
 			case 1:
-				acc_type = FAIL;
-				acc_type = recv_account_type(thr_data->numbytes, thr_data->new_fd, thr_data->login_input);
 
-				if(acc_type == FAIL){
+
+				if(acc_type = recv_account_type(thr_data->numbytes, thr_data->new_fd, thr_data->login_input) == FAIL){
+					printf("\nacc fail\n");
 					break;
 				}
 				if(handle_bal_enquiry(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, acc_type) == FAIL){
+					printf("\nacc fail\n");
 					break;
 				}
 				break;
 			case 2:
-
-				acc_type = FAIL;
-				acc_type = recv_account_type(thr_data->numbytes, thr_data->new_fd, thr_data->login_input);
-
-				if(acc_type == FAIL){
+				if(acc_type = recv_account_type(thr_data->numbytes, thr_data->new_fd, thr_data->login_input) == FAIL){
+					printf("\nacc fail\n");
 					break;
 				}
 				if(deduction(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, acc_type, thr_data->tran_record_list) == FAIL){
+					printf("\nacc fail\n");
 					break;
 				}
 				break;
 			case 3:
-				selection = FAIL;
-				acc_type = FAIL;
-				acc_type = recv_account_type(thr_data->numbytes, thr_data->new_fd, thr_data->login_input);
-
-				if(acc_type == FAIL){
+				if(acc_type = recv_account_type(thr_data->numbytes, thr_data->new_fd, thr_data->login_input) == FAIL){
+					printf("\nacc fail\n");
 					break;
 				}
 				if(make_deposit(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, acc_type, thr_data->tran_record_list) == FAIL){

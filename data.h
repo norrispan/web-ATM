@@ -38,7 +38,7 @@
 #define FAIL_SIGNAL "F"
 #define SUCCESS_SIGNAL "S"
 #define MENU_SIGNAL "M"
-
+#define ACC_TYPE_SIGNAL "A"
 #define EXIT_SIGNAL "E"
 
 #define DOT 46

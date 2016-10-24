@@ -1,11 +1,11 @@
 #ifndef __C_BALANCE_H_H__
-#define __C_BALANCE_H_H__ 
+#define __C_BALANCE_H_H__
 
 
-/* 
+/*
 
-	Author: PAN Ningyuan 
-	Date: October 2016 
+	Author: PAN Ningyuan
+	Date: October 2016
 
 */
 
@@ -21,7 +21,7 @@ int balance_menu(user_t my_login);
 
 int convert_bal(user_t my_login, int selection);
 
-void send_bal_select(user_t my_login, int selection, int sockfd);
+int send_bal_select(user_t my_login, int selection, int sockfd);
 
 void get_balance(int numbytes, int sockfd, char *close_bal, user_t my_login, int selection);
 

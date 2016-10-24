@@ -103,19 +103,19 @@ int convert_bal(user_t my_login, int selection){
 	return account_type_no;
 }
 
-void send_bal_select(user_t my_login, int selection, int sockfd){
+int send_bal_select(user_t my_login, int selection, int sockfd){
 	int account_type_no;
 	account_type_no = convert_bal(my_login, selection);
 
-	char *account_type = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
-
+	char account_type[DATA_BUF_SIZE];
 	snprintf(account_type, DATA_BUF_SIZE, "%d", account_type_no);
-
+	strcat(account_type, ",");
+	strcat(account_type, ACC_TYPE_SIGNAL);
 	if (send(sockfd, account_type, DATA_BUF_SIZE * sizeof(char), 0) == -1){
 		perror("send");
+		return FAIL;
 	}
-	free(account_type);
-	account_type = NULL;
+	return SUCCESS;
 }
 
 void get_balance(int numbytes, int sockfd, char *close_bal, user_t my_login, int selection){

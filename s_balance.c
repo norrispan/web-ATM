@@ -53,18 +53,23 @@ acc_node_t *get_account_details(){
 
 int recv_account_type(int numbytes, int new_fd, user_t login_input){
 	int account_type_no;
-	char *account_type = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+	char account_type[DATA_BUF_SIZE];
 	if ((numbytes = recv(new_fd, account_type, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
 		perror("recv");
-		account_type_no = -1;
-	}
-	else{
-		printf("\nacct _type%s\n", account_type);
-		account_type_no = atoi(account_type);
+		return FAIL;
 	}
 
-	free(account_type);
-	account_type = NULL;
+	bool invalid = true;
+	if(account_type[0] >= 49 && account_type[0] <= 51 && account_type[1] == ',' && account_type[2] == 'A'){
+		invalid = false;
+	}
+	if(invalid){
+		return FAIL;
+	}
+	char *temp;
+	temp = strtok(account_type,",");
+	account_type_no = atoi(temp);
+	free(temp);
 	return account_type_no;
 }
 
