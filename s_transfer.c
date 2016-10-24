@@ -97,10 +97,10 @@ int handle_interal(int numbytes, int new_fd, user_t login_input, acc_node_t *acc
     }
     amount = recv_amount(numbytes, new_fd);
 
-    if(handle_withdraw(numbytes, new_fd, acc_bal_list, login_input, tran_record_list, amount, origin_acct) == FAIL){
+    if(handle_withdraw(numbytes, new_fd, acc_bal_list, login_input, amount, origin_acct) == FAIL){
         return FAIL;
     }
-    if(handle_deposit(numbytes, new_fd, acc_bal_list, login_input, tran_record_list, amount, dest_acct) == FAIL){
+    if(handle_deposit(numbytes, new_fd, acc_bal_list, login_input, amount, dest_acct) == FAIL){
         return FAIL;
     }
     return SUCCESS;

@@ -13,19 +13,20 @@
 #include "data.h"
 #include "s_balance_h.h"
 
+/* arrange account numbers in the following order: saving, loan and credit */
 void sort_account(char *accounts[]);
 
+/* get user details from txt */
 user_node_t *get_user_details();
 
-
+/* check port argument */
 void argument_check(int argc, char *argv[], short my_port);
 
-int authentication(pthread_mutex_t *p_mutex, int numbytes, int new_fd, user_node_t *user_login_list, user_t login_input);
+/* authentication */
+int authentication(int numbytes, int new_fd, user_node_t *user_login_list, user_t login_input);
 
+/* receive main menu selection */
 int recv_selection(int numbytes, int new_fd);
 
-int recv_test(int numbytes, int new_fd);
-
-void handle_client(thread_data_t *thr_data);
 
 #endif

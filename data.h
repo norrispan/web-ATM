@@ -28,8 +28,8 @@
 #include <errno.h>
 #include <arpa/inet.h>
 #include <netdb.h>
-
-#define LINE_BUF_SIZE 200
+/*  userful macros and self defined data type */
+#define LINE_BUF_SIZE 400
 #define DATA_BUF_SIZE 100
 
 #define FAIL -1
@@ -71,7 +71,6 @@ struct user{
 	char *first_name;
 	char *last_name;
 	char *accounts[ACCOUNT_TYPE_NUM];
-	bool status;
 };
 
 
@@ -107,7 +106,7 @@ struct tran{
 
 typedef struct tran_node tran_node_t;
 struct tran_node{
-	tran_t* record;
+	tran_t record;
 	tran_node_t* next;
 };
 
@@ -129,7 +128,6 @@ struct thread_data{
 	acc_node_t *acc_bal_list;
 	tran_node_t *tran_record_list;
 	pthread_mutex_t *data_mutex;
-
 };
 
 

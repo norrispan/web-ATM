@@ -21,7 +21,7 @@
 
 pthread_mutex_t request_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
 
-pthread_cond_t  got_request   = PTHREAD_COND_INITIALIZER;
+pthread_cond_t got_request = PTHREAD_COND_INITIALIZER;
 
 int pending_requests = 0;
 
@@ -60,7 +60,7 @@ void add_request(int request_num, int new_fd, pthread_mutex_t *p_mutex, pthread_
     pending_requests++;
     rc = pthread_mutex_unlock(p_mutex);
     rc = pthread_cond_signal(p_cond_var);
-	//printf("\n%d", request_num);
+
 }
 
 request_t* get_request(pthread_mutex_t* p_mutex){
@@ -122,14 +122,7 @@ void *handle_requests_loop(void *ptr){
 
 void signal_handler(int signal){
 	if(signal == SIGINT){
-		// for(; tran_record_list != NULL; tran_record_list = tran_record_list->next){
-		// 	printf("\n%s   %s  %s  %s\n", tran_record_list->record->from, tran_record_list->record->to, tran_record_list->record->type, tran_record_list->record->amount);
-		// }
-		// for(; acc_bal_list != NULL; acc_bal_list = acc_bal_list->next){
-		// 	printf("\n%s   %s  %s  \n", acc_bal_list->account_detail.acc_no, acc_bal_list->account_detail.open_bal, acc_bal_list->account_detail.close_bal);
-		// }
-
-		//write_record(tran_record_list);
+		write_record(tran_record_list);
 		write_bal_record(acc_bal_list);
 		printf("\nexit");
 		exit(0);
@@ -159,14 +152,7 @@ int main(int argc, char *argv[]){
 
 	user_list = get_user_details();
 	acc_bal_list = get_account_details();
-	//tran_node_t *tran_record_list = (tran_node_t *)malloc(sizeof(tran_node_t));
-	//tran_record_list->record = (tran_t *)malloc(sizeof(tran_t));
-	//tran_record_list->record->from = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
-	//tran_record_list->record->to = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
-	//tran_record_list->record->type = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
-	//tran_record_list->record->amount = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
-
-
+	tran_node_t *tran_record_list = get_record();
 
 	for(int i = 0; i < THREADS_NUM; i++){
 		thr_data_array[i].data_mutex = &data_mutex;
@@ -181,7 +167,6 @@ int main(int argc, char *argv[]){
 		for(int j = 0; j < ACCOUNT_TYPE_NUM; j++){
 			thr_data_array[i].login_input.accounts[j] = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
 		}
-		thr_data_array[i].login_input.status = false;
 	}
 
 

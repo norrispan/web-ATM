@@ -78,7 +78,6 @@ user_node_t *get_user_details(){
 				for(int i = 0; i < ACCOUNT_TYPE_NUM; i++){
 					new->login->accounts[i] = (char*)malloc(DATA_BUF_SIZE * sizeof(char));
 				}
-				new->login->status = 0;
 				fgets(line1, LINE_BUF_SIZE * sizeof(char),file1);
 				fgets(line2, LINE_BUF_SIZE * sizeof(char),file2);
 				sscanf(line1, "%s", new->login->username);
@@ -125,51 +124,41 @@ void argument_check(int argc, char *argv[], short my_port){
 	}
 }
 
-int authentication(pthread_mutex_t *p_mutex, int numbytes, int new_fd, user_node_t *user_login_list, user_t login_input){
+int authentication(int numbytes, int new_fd, user_node_t *user_login_list, user_t login_input){
 	bool valid = false;
 	user_node_t *auth_list;
 	user_node_t *temp;
-	int lock;
 	if ((numbytes = recv(new_fd, login_input.username, DATA_BUF_SIZE * sizeof(char), 0)) == FAIL){
 		perror("recv username");
-		close(new_fd);
 		return FAIL;
 	}
 	if ((numbytes = recv(new_fd, login_input.pin, DATA_BUF_SIZE * sizeof(char), 0)) == FAIL){
 		perror("recv pin");
-		close(new_fd);
 		return FAIL;
 	}
 	auth_list = user_login_list;
 	for( ; auth_list != NULL; auth_list = auth_list->next) {
 		if(strcmp(login_input.username, auth_list->login->username) == 0 && strcmp(login_input.pin, auth_list->login->pin) == 0){
-
-			if(auth_list->login->status == false){
-				strcpy(login_input.client_no, auth_list->login->client_no);
-				strcpy(login_input.first_name, auth_list->login->first_name);
-				strcpy(login_input.last_name, auth_list->login->last_name);
-				for(int i = 0; i < ACCOUNT_TYPE_NUM; i++){
-				strcpy(login_input.accounts[i], auth_list->login->accounts[i]);
-				}
-				valid = true;
-				break;
+			strcpy(login_input.client_no, auth_list->login->client_no);
+			strcpy(login_input.first_name, auth_list->login->first_name);
+			strcpy(login_input.last_name, auth_list->login->last_name);
+			for(int i = 0; i < ACCOUNT_TYPE_NUM; i++){
+			strcpy(login_input.accounts[i], auth_list->login->accounts[i]);
 			}
-
-
+			valid = true;
+			break;
 		}
 	}
 
 	if(valid){
 		if (send(new_fd, auth_list->login->client_no, DATA_BUF_SIZE * sizeof(char), 0) == FAIL){
-			close(new_fd);
+
 			return FAIL;
 		}
 		if (send(new_fd, auth_list->login->first_name, DATA_BUF_SIZE * sizeof(char), 0) == FAIL){
-			close(new_fd);
 			return FAIL;
 		}
 		if (send(new_fd, auth_list->login->last_name, DATA_BUF_SIZE * sizeof(char), 0) == FAIL){
-			close(new_fd);
 			return FAIL;
 		}
 		for(int i = 0; i < ACCOUNT_TYPE_NUM; i++){
@@ -182,11 +171,8 @@ int authentication(pthread_mutex_t *p_mutex, int numbytes, int new_fd, user_node
 	}
 	else{
 		if (send(new_fd, FAIL_SIGNAL, DATA_BUF_SIZE * sizeof(char), 0) == FAIL){
-			close(new_fd);
 			return FAIL;
 		}
-
-		close(new_fd);
 		return FAIL;
 	}
 
@@ -219,7 +205,7 @@ void handle_client(thread_data_t *thr_data){
 	int selection;
 	char *amount;
 	int acc_type;
-	if(authentication(thr_data->data_mutex, thr_data->numbytes, thr_data->new_fd, thr_data->user_login_list, thr_data->login_input) != FAIL){
+	if(authentication(thr_data->numbytes, thr_data->new_fd, thr_data->user_login_list, thr_data->login_input) != FAIL){
 		online = true;
 	}
 	if(online){
@@ -244,10 +230,11 @@ void handle_client(thread_data_t *thr_data){
 				if(strcmp(amount, FAIL_SIGNAL) == 0){
 					break;
 				}
-				if(handle_withdraw(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, thr_data->tran_record_list, amount, acc_type) == FAIL){
+				if(handle_withdraw(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, amount, acc_type) == FAIL){
 					printf("\nw fail\n");
 					break;
 				}
+				add_record(thr_data->login_input.accounts[acc_type], thr_data->login_input.accounts[acc_type], WITHDRAW, amount, thr_data->tran_record_list);
 				break;
 			case 3:
 				acc_type = recv_account_type(thr_data->numbytes, thr_data->new_fd, thr_data->login_input);
@@ -258,9 +245,10 @@ void handle_client(thread_data_t *thr_data){
 				if(strcmp(amount, FAIL_SIGNAL) == 0){
 					break;
 				}
-				if(handle_deposit(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, thr_data->tran_record_list, amount, acc_type) == FAIL){
+				if(handle_deposit(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, amount, acc_type) == FAIL){
 					break;
 				}
+				add_record(thr_data->login_input.accounts[acc_type], thr_data->login_input.accounts[acc_type], DEPOSIT, amount, thr_data->tran_record_list);
 				break;
 			case 4:
 				if(handle_transfer(thr_data->numbytes, thr_data->new_fd, thr_data->login_input, thr_data->acc_bal_list, thr_data->tran_record_list) == FAIL){

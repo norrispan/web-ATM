@@ -28,8 +28,7 @@ acc_node_t *get_account_details(){
 				sscanf(line, "%*s%s", new->account_detail.open_bal);
 				sscanf(line, "%*s%*s%s", new->account_detail.close_bal);
 
-				//printf("\n%s   %s    %s", new->account_detail.acc_no, new->account_detail.open_bal, new->account_detail.close_bal);
-				//printf("\n");
+
 
 				new->next = acc_bal_list;
 				acc_bal_list = new;
