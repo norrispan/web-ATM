@@ -228,24 +228,15 @@ void handle_client(thread_data_t *thr_data){
 				printf("\nmenu fail\n");
 				break;
 			case 1:
-
-
-				if(acc_type = recv_account_type(thr_data->numbytes, thr_data->new_fd, thr_data->login_input) == FAIL){
-					printf("\nacc fail\n");
-					break;
-				}
-				if(handle_bal_enquiry(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, acc_type) == FAIL){
-					printf("\nacc fail\n");
+				if(handle_bal_enquiry(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input) == FAIL){
+					printf("\nbal fail\n");
 					break;
 				}
 				break;
 			case 2:
-				if(acc_type = recv_account_type(thr_data->numbytes, thr_data->new_fd, thr_data->login_input) == FAIL){
-					printf("\nacc fail\n");
-					break;
-				}
-				if(deduction(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, acc_type, thr_data->tran_record_list) == FAIL){
-					printf("\nacc fail\n");
+
+				if(handle_withdraw(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, thr_data->tran_record_list) == FAIL){
+					printf("\nw fail\n");
 					break;
 				}
 				break;

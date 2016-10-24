@@ -21,7 +21,7 @@ int balance_menu(user_t my_login);
 
 int convert_bal(user_t my_login, int selection);
 
-int send_bal_select(user_t my_login, int selection, int sockfd);
+int send_acc_select(user_t my_login, int selection, int sockfd, int acc_type_no);
 
 void get_balance(int numbytes, int sockfd, char *close_bal, user_t my_login, int selection);
 

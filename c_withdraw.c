@@ -105,28 +105,19 @@ int convert_wd(user_t my_login, int selection){
 
 }
 
-void send_bal_acc(int sockfd, int numbytes, int selection, char *close_bal, user_t my_login){
-	int account_type_no;
-	account_type_no = convert_wd(my_login, selection);
 
-	char *account_type = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
-
-	snprintf(account_type, DATA_BUF_SIZE, "%d", account_type_no);
-
-	if (send(sockfd, account_type, DATA_BUF_SIZE * sizeof(char), 0) == -1){
+int send_amount(int sockfd, char *amount){
+	strcat(amount, ",");
+	strcat(amount, AMOUNT_SIGNAL);
+	if (send(sockfd, amount, DATA_BUF_SIZE * sizeof(char), 0) == -1){
 		perror("send");
+		return FAIL;
 	}
-	free(account_type);
-	account_type = NULL;
+	return SUCCESS;
 }
 
 
-
-void withdraw(int numbytes, int sockfd, char *amount, acc_t my_bal){
-
-	if (send(sockfd, amount, DATA_BUF_SIZE * sizeof(char), 0) == -1){
-		perror("send");
-	}
+void recv_withdraw(int numbytes, int sockfd, char *amount, acc_t my_bal){
 	if ((numbytes = recv(sockfd, my_bal.close_bal, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
 		perror("recv");
 	}
@@ -140,23 +131,23 @@ void withdraw(int numbytes, int sockfd, char *amount, acc_t my_bal){
 		printf("\n\nWithdraw Completed: Closing balance: $%s", my_bal.close_bal);
 		printf("\n\n========================================================\n");
 	}
-
-
 }
 
 
 void make_withdraw(user_t my_login, int sockfd, int numbytes, acc_t my_bal){
 	int num_of_account;
 	int selection;
-	int acc_id;
+	int acc_type_no;
 	char *amount;
 	int over_limit = 0;
 
 	num_of_account = withdraw_menu(my_login);
 	selection = get_selection(num_of_account);
-	printf("S");
-	acc_id = convert_wd(my_login, selection);
-	send_bal_acc(sockfd, numbytes, selection, my_bal.close_bal, my_login);
+	acc_type_no = convert_wd(my_login, selection);
+
+	send_acc_select(my_login, selection, sockfd, acc_type_no);
 	amount = get_withdraw_amount(sockfd, selection, my_bal.close_bal);
-	withdraw(numbytes, sockfd, amount, my_bal);
+	send_amount(sockfd, amount);
+
+	recv_withdraw(numbytes, sockfd, amount, my_bal);
 }

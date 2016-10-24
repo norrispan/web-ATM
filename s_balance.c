@@ -18,17 +18,17 @@ acc_node_t *get_account_details(){
 		while(!feof(file)){
 			if(current_line == start_line ){
 				acc_node_t *new = (acc_node_t *)malloc(sizeof(acc_node_t));
-				new->account_detail = (acc_t *)malloc(sizeof(acc_t));
-				new->account_detail->acc_no = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
-				new->account_detail->open_bal = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
-				new->account_detail->close_bal = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+
+				new->account_detail.acc_no = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+				new->account_detail.open_bal = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+				new->account_detail.close_bal = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 
 				fgets(line, LINE_BUF_SIZE * sizeof(char),file);
-				sscanf(line, "%s", new->account_detail->acc_no);
-				sscanf(line, "%*s%s", new->account_detail->open_bal);
-				sscanf(line, "%*s%*s%s", new->account_detail->close_bal);
+				sscanf(line, "%s", new->account_detail.acc_no);
+				sscanf(line, "%*s%s", new->account_detail.open_bal);
+				sscanf(line, "%*s%*s%s", new->account_detail.close_bal);
 
-				//printf("\n%s   %s    %s", new->account_detail->acc_no, new->account_detail->open_bal, new->account_detail->close_bal);
+				//printf("\n%s   %s    %s", new->account_detail.acc_no, new->account_detail.open_bal, new->account_detail.close_bal);
 				//printf("\n");
 
 				new->next = acc_bal_list;
@@ -60,7 +60,8 @@ int recv_account_type(int numbytes, int new_fd, user_t login_input){
 	}
 
 	bool invalid = true;
-	if(account_type[0] >= 49 && account_type[0] <= 51 && account_type[1] == ',' && account_type[2] == 'A'){
+	printf("\n%s\n", account_type);
+	if(account_type[0] >= 48 && account_type[0] <= 50 && account_type[1] == ',' && account_type[2] == 'A'){
 		invalid = false;
 	}
 	if(invalid){
@@ -74,27 +75,33 @@ int recv_account_type(int numbytes, int new_fd, user_t login_input){
 }
 
 
-int handle_bal_enquiry(int numbytes, int new_fd, acc_node_t *acc_bal_list, user_t login_input, int acc_type){
+int handle_bal_enquiry(int numbytes, int new_fd, acc_node_t *acc_bal_list, user_t login_input){
+	int acc_type;
+	acc_type = recv_account_type(numbytes, new_fd, login_input);
+	if(acc_type == FAIL){
+		printf("\nacc fail\n");
+		return FAIL;
+	}
+
 	bool is_match = false;
 	acc_node_t *temp_list;
 	temp_list = acc_bal_list;
 	for( ; temp_list != NULL; temp_list = temp_list->next){
-		if(strcmp(temp_list->account_detail->acc_no, login_input.accounts[acc_type]) == 0){
+		if(strcmp(temp_list->account_detail.acc_no, login_input.accounts[acc_type]) == 0){
 			is_match = true;
 			break;
 		}
 	}
-
 	if(is_match){
-		if (send(new_fd, temp_list->account_detail->close_bal, DATA_BUF_SIZE * sizeof(char), 0) == -1){
+		if (send(new_fd, temp_list->account_detail.close_bal, DATA_BUF_SIZE * sizeof(char), 0) == -1){
 			perror("send");
-			return -1;
+			return FAIL;
 		}
 
-		return 1;
+		return SUCCESS;
 	}
 	else{
-		return -1;
+		return FAIL;
 	}
 
 }

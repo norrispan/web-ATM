@@ -21,10 +21,9 @@ char *get_withdraw_amount();
 
 int convert_wd(user_t my_login, int selection);
 
-void send_bal_acc(int sockfd, int numbytes, int selection, char *close_bal, user_t my_login);
+int send_amount(int sockfd, char *amount);
 
-
-void withdraw(int numbytes, int sockfd, char *amount, acc_t my_bal);
+void recv_withdraw(int numbytes, int sockfd, char *amount, acc_t my_bal);
 
 
 void make_withdraw(user_t my_login, int sockfd, int numbytes, acc_t my_bal);

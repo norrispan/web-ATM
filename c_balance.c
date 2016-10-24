@@ -103,10 +103,7 @@ int convert_bal(user_t my_login, int selection){
 	return account_type_no;
 }
 
-int send_bal_select(user_t my_login, int selection, int sockfd){
-	int account_type_no;
-	account_type_no = convert_bal(my_login, selection);
-
+int send_acc_select(user_t my_login, int selection, int sockfd, int account_type_no){
 	char account_type[DATA_BUF_SIZE];
 	snprintf(account_type, DATA_BUF_SIZE, "%d", account_type_no);
 	strcat(account_type, ",");
@@ -123,7 +120,6 @@ void get_balance(int numbytes, int sockfd, char *close_bal, user_t my_login, int
 		perror("recv");
 	}
 	int account_type_no;
-	account_type_no = convert_bal(my_login, selection);
 
 	printf("\n\n========================================================\n");
 	printf("\nAccount Name - %s %s\n", my_login.first_name, my_login.last_name);
@@ -136,8 +132,11 @@ void get_balance(int numbytes, int sockfd, char *close_bal, user_t my_login, int
 void show_balance(user_t my_login, int sockfd, int numbytes, acc_t my_bal){
 	int num_of_account;
 	int selection;
+	int acc_type_no;
+
 	num_of_account = balance_menu(my_login);
 	selection = get_selection(num_of_account);
-	send_bal_select(my_login, selection, sockfd);
+	acc_type_no = convert_bal(my_login, selection);
+	send_acc_select(my_login, selection, sockfd, acc_type_no);
 	get_balance(numbytes, sockfd, my_bal.close_bal, my_login, selection);
 }

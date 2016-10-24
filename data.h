@@ -39,6 +39,7 @@
 #define SUCCESS_SIGNAL "S"
 #define MENU_SIGNAL "M"
 #define ACC_TYPE_SIGNAL "A"
+#define AMOUNT_SIGNAL "$"
 #define EXIT_SIGNAL "E"
 
 #define DOT 46
@@ -89,7 +90,7 @@ struct acc{
 
 typedef struct acc_node acc_node_t;
 struct acc_node{
-	acc_t *account_detail;
+	acc_t account_detail;
 	acc_node_t *next;
 };
 

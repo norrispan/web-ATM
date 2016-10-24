@@ -103,9 +103,12 @@ void make_deposit(user_t my_login, int sockfd, int numbytes, acc_t my_bal){
 	int num_of_account;
 	int selection;
 	char *amount;
+	int acc_type_no;
+
 	num_of_account = balance_menu(my_login);
 	selection = get_selection(num_of_account);
-	send_bal_select(my_login, selection, sockfd);
+	acc_type_no = convert_bal(my_login, selection);
+	//send_acc_select(my_login, selection, sockfd);
 	amount = get_deposit_amount();
 	deposit(numbytes, sockfd, amount, my_bal);
 }
