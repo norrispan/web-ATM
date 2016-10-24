@@ -12,7 +12,7 @@
 
 
 #include "data.h"
-
+void make_deposit(user_t my_login, int sockfd, int numbytes, acc_t my_bal);
 
 
 #endif

@@ -7,6 +7,40 @@
 #include "c_deposit_h.h"
 
 
+int deposit_menu(user_t my_login){
+	int num_of_account = 0;
+	printf("\n\n========================================================");
+	printf("\n\nYour daily deposit limit is $1000.00!");
+	printf("\n\n\n\nSelect Account Type");
+	for(int i = 0; i < ACCOUNT_TYPE_NUM; i++){
+		if(atoi(my_login.accounts[i]) != 0){
+			num_of_account++;
+		}
+	}
+	switch(num_of_account){
+		case 1:
+			printf("\n1. ");
+			print_acct_bal(my_login, 1);
+			break;
+		case 2:
+			printf("\n1. ");
+			print_acct_bal(my_login, 1);
+			printf("\n2. ");
+			print_acct_bal(my_login, 2);
+			break;
+		case 3:
+			printf("\n1. ");
+			print_acct_bal(my_login, 1);
+			printf("\n2. ");
+			print_acct_bal(my_login, 2);
+			printf("\n3. ");
+			print_acct_bal(my_login, 3);
+			break;
+	}
+	return num_of_account;
+}
+
+
 char *get_deposit_amount(){
 	bool invalid = false;
 	bool wrong = false;
@@ -53,11 +87,25 @@ char *get_deposit_amount(){
 	return amount;
 }
 
+void deposit(int numbytes, int sockfd, char *amount, acc_t my_bal){
+	if (send(sockfd, amount, DATA_BUF_SIZE * sizeof(char), 0) == -1){
+		perror("send");
+	}
+	if ((numbytes = recv(sockfd, my_bal.close_bal, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
+		perror("recv");
+	}
+	printf("\n\nDeposit Completed: Closing balance: $%s", my_bal.close_bal);
+	printf("\n\n========================================================\n");
+
+}
+
 void make_deposit(user_t my_login, int sockfd, int numbytes, acc_t my_bal){
 	int num_of_account;
 	int selection;
+	char *amount;
 	num_of_account = balance_menu(my_login);
 	selection = get_selection(num_of_account);
 	send_bal_select(my_login, selection, sockfd);
-	get_balance(numbytes, sockfd, my_bal.close_bal, my_login, selection);
+	amount = get_deposit_amount();
+	deposit(numbytes, sockfd, amount, my_bal);
 }

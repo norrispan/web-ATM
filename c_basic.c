@@ -120,7 +120,7 @@ void send_menu_select(int selection, int sockfd){
 
 void exit_client(){
 
-	exit(0);
+	exit(1);
 }
 
 
@@ -142,7 +142,7 @@ void client(int numbytes, int sockfd, user_t my_login, acc_t my_bal){
 			make_withdraw(my_login, sockfd, numbytes, my_bal);
 			break;
 		case 3:
-
+			make_deposit(my_login, sockfd, numbytes, my_bal);
 			break;
 		case 4:
 

@@ -107,54 +107,43 @@ int convert_wd(user_t my_login, int selection){
 
 void send_bal_acc(int sockfd, int numbytes, int selection, char *close_bal, user_t my_login){
 	int account_type_no;
-	printf("\nselection %d\n", selection);
 	account_type_no = convert_wd(my_login, selection);
+
 	char *account_type = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+
 	snprintf(account_type, DATA_BUF_SIZE, "%d", account_type_no);
-	printf("\nconvert %s\n", account_type);
+
 	if (send(sockfd, account_type, DATA_BUF_SIZE * sizeof(char), 0) == -1){
 		perror("send");
 	}
-
+	free(account_type);
+	account_type = NULL;
 }
 
-int wd_over_limit(char *amount, acc_t my_bal, int acc_id){
-	int over_limit = 0;
-	if(atof(amount) == 0){
-		over_limit = -1;
-	}
-	else{
-		if(acc_id == SAVING){
-			if(atof(amount) < atof(my_bal.close_bal)){
-				over_limit = 1;
-			}
-		}
-		else{
-			if(atof(amount) < atof(my_bal.close_bal) + CREDIT_LIMIT){
-				over_limit = 1;
-			}
-		}
-	}
-	return over_limit;
-}
+
 
 void withdraw(int numbytes, int sockfd, char *amount, acc_t my_bal){
+
 	if (send(sockfd, amount, DATA_BUF_SIZE * sizeof(char), 0) == -1){
 		perror("send");
 	}
 	if ((numbytes = recv(sockfd, my_bal.close_bal, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
 		perror("recv");
 	}
-	printf("\n\nWithdraw Completed: Closing balance: $%s", my_bal.close_bal);
-	printf("\n\n======================================================================================\n");
-
-}
-
-void send_wd_fail(int sockfd){
-	if (send(sockfd, FAIL_SIGNAL, DATA_BUF_SIZE * sizeof(char), 0) == -1){
-		perror("send");
+	if(strcmp(my_bal.close_bal, FAIL_SIGNAL) == 0){
+		printf("\nnimeiwa dfsaf");
+		strcpy(my_bal.close_bal, "\0");
+		printf("\n\nInsufficiant Funds - Unable to proccess request");
+		printf("\n\n========================================================\n");
 	}
+	else{
+		printf("\n\nWithdraw Completed: Closing balance: $%s", my_bal.close_bal);
+		printf("\n\n========================================================\n");
+	}
+
+
 }
+
 
 void make_withdraw(user_t my_login, int sockfd, int numbytes, acc_t my_bal){
 	int num_of_account;
@@ -165,27 +154,9 @@ void make_withdraw(user_t my_login, int sockfd, int numbytes, acc_t my_bal){
 
 	num_of_account = withdraw_menu(my_login);
 	selection = get_selection(num_of_account);
+	printf("S");
 	acc_id = convert_wd(my_login, selection);
-
 	send_bal_acc(sockfd, numbytes, selection, my_bal.close_bal, my_login);
 	amount = get_withdraw_amount(sockfd, selection, my_bal.close_bal);
-
-	over_limit = wd_over_limit(amount, my_bal, acc_id);
-	switch(over_limit){
-		case -1:
-			send_wd_fail(sockfd);
-			printf("\n\nAmount must be greater than 0.00");
-			printf("\n\n========================================================\n");
-			break;
-		case 0:
-			send_wd_fail(sockfd);
-			printf("\n\nInsufficient Funds - Unable to process request");
-			printf("\n\n========================================================\n");
-			break;
-		case 1:
-			withdraw(numbytes, sockfd, amount, my_bal);
-			break;
-
-	}
-
+	withdraw(numbytes, sockfd, amount, my_bal);
 }

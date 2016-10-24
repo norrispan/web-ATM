@@ -6,7 +6,7 @@
 
 int get_selection(int num_of_account){
 	bool invalid = false;
-	char *buffer = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+	char buffer[DATA_BUF_SIZE];
 	int selection;
 	do{
 		printf("\n\nEnter your selection (E/e to exit) - ");
@@ -30,8 +30,6 @@ int get_selection(int num_of_account){
 		}
 	}while(invalid);
 	selection = atoi(buffer);
-	free(buffer);
-	buffer = NULL;
 	return selection;
 }
 

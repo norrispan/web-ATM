@@ -23,11 +23,9 @@ int convert_wd(user_t my_login, int selection);
 
 void send_bal_acc(int sockfd, int numbytes, int selection, char *close_bal, user_t my_login);
 
-int wd_over_limit(char *amount, acc_t my_bal, int acc_id);
 
 void withdraw(int numbytes, int sockfd, char *amount, acc_t my_bal);
 
-void send_wd_fail(int sockfd);
 
 void make_withdraw(user_t my_login, int sockfd, int numbytes, acc_t my_bal);
 

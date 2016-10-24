@@ -5,6 +5,7 @@
 #include "s_balance_h.h"
 #include "s_withdraw_h.h"
 #include "s_deposit_h.h"
+#include "s_record_h.h"
 /*
 
 	Author: PAN Ningyuan
@@ -130,11 +131,11 @@ int authentication(pthread_mutex_t *p_mutex, int numbytes, int new_fd, user_node
 	int lock;
 	if ((numbytes = recv(new_fd, login_input.username, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
 		close(new_fd);
-		return FAIL;
+		return -1;
 	}
 	if ((numbytes = recv(new_fd, login_input.pin, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
 		close(new_fd);
-		return FAIL;
+		return -1;
 	}
 	auth_list = user_login_list;
 	for( ; auth_list != NULL; auth_list = auth_list->next) {
@@ -158,15 +159,15 @@ int authentication(pthread_mutex_t *p_mutex, int numbytes, int new_fd, user_node
 	if(valid){
 		if (send(new_fd, auth_list->login->client_no, DATA_BUF_SIZE * sizeof(char), 0) == -1){
 			close(new_fd);
-			return FAIL;
+			return -1;
 		}
 		if (send(new_fd, auth_list->login->first_name, DATA_BUF_SIZE * sizeof(char), 0) == -1){
 			close(new_fd);
-			return FAIL;
+			return -1;
 		}
 		if (send(new_fd, auth_list->login->last_name, DATA_BUF_SIZE * sizeof(char), 0) == -1){
 			close(new_fd);
-			return FAIL;
+			return -1;
 		}
 		for(int i = 0; i < ACCOUNT_TYPE_NUM; i++){
 			if (send(new_fd, auth_list->login->accounts[i], DATA_BUF_SIZE * sizeof(char), 0) == -1){
@@ -175,10 +176,10 @@ int authentication(pthread_mutex_t *p_mutex, int numbytes, int new_fd, user_node
 				//auth_list->login->status == false;
 				//login_input.status = false;
 				//lock = pthread_mutex_unlock(p_mutex);
-				return FAIL;
+				return -1;
 			}
 		}
-		return SUCCESS;
+		return 1;
 
 	}
 	else{
@@ -190,7 +191,7 @@ int authentication(pthread_mutex_t *p_mutex, int numbytes, int new_fd, user_node
 		//auth_list->login->status == false;
 		//	login_input.status = false;
 		//lock = pthread_mutex_unlock(p_mutex);
-		return FAIL;
+		return -1;
 	}
 
 }
@@ -199,12 +200,11 @@ int recv_selection(int numbytes, int new_fd){
 	char *select_buf = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	if ((numbytes = recv(new_fd, select_buf, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
 		perror("recv");
-		return FAIL;
+		return -1;
 	}
 	int selection = atoi(select_buf);
 	free(select_buf);
 	select_buf = NULL;
-	//printf("\n%d\n", selection);
 	return selection;
 }
 
@@ -219,18 +219,41 @@ void handle_client(thread_data_t *thr_data){
 		selection = 0;
 		selection = recv_selection(thr_data->numbytes, thr_data->new_fd);
 		switch (selection){
-			case 0:
+			case -1:
 				break;
 			case 1:
-				if(acc_type = recv_account_type(thr_data->numbytes, thr_data->new_fd, thr_data->login_input) == FAIL){
+				selection = -1;
+				acc_type = -1;
+				acc_type = recv_account_type(thr_data->numbytes, thr_data->new_fd, thr_data->login_input);
+				printf("\nacc%d\n", acc_type);
+				if(acc_type == -1){
 					break;
 				}
-				if(handle_bal_enquiry(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, acc_type) == FAIL){
+				if(handle_bal_enquiry(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, acc_type) == -1){
 					break;
 				}
 				break;
 			case 2:
-				if(handle_withdraw(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, thr_data->tran_record_list) == FAIL){
+				selection = -1;
+				acc_type = -1;
+				acc_type = recv_account_type(thr_data->numbytes, thr_data->new_fd, thr_data->login_input);
+				printf("\nacc%d\n", acc_type);
+				if(acc_type == -1){
+					break;
+				}
+				if(deduction(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, acc_type, thr_data->tran_record_list) == -1){
+					break;
+				}
+				break;
+			case 3:
+				selection = -1;
+				acc_type = -1;
+				acc_type = recv_account_type(thr_data->numbytes, thr_data->new_fd, thr_data->login_input);
+				printf("\nacc%d\n", acc_type);
+				if(acc_type == -1){
+					break;
+				}
+				if(make_deposit(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, acc_type, thr_data->tran_record_list) == -1){
 					break;
 				}
 				break;

@@ -125,9 +125,9 @@ void signal_handler(int signal){
 		for(; tran_record_list != NULL; tran_record_list = tran_record_list->next){
 			printf("\n%s   %s  %s  %s\n", tran_record_list->record->from, tran_record_list->record->to, tran_record_list->record->type, tran_record_list->record->amount);
 		}
-		//for(; acc_bal_list != NULL; acc_bal_list = acc_bal_list->next){
-		//	printf("\n%s   %s  %s  \n", acc_bal_list->account_detail->acc_no, acc_bal_list->account_detail->open_bal, acc_bal_list->account_detail->close_bal);
-		//}
+		for(; acc_bal_list != NULL; acc_bal_list = acc_bal_list->next){
+			printf("\n%s   %s  %s  \n", acc_bal_list->account_detail->acc_no, acc_bal_list->account_detail->open_bal, acc_bal_list->account_detail->close_bal);
+		}
 
 		//write_record(tran_record_list);
 		//write_bal_record(acc_bal_list);

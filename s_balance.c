@@ -52,12 +52,17 @@ acc_node_t *get_account_details(){
 
 
 int recv_account_type(int numbytes, int new_fd, user_t login_input){
+	int account_type_no;
 	char *account_type = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	if ((numbytes = recv(new_fd, account_type, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
-		return FAIL;
+		perror("recv");
+		account_type_no = -1;
 	}
-	printf("\n%s\n", account_type);
-	int account_type_no = atoi(account_type);
+	else{
+		printf("\nacct _type%s\n", account_type);
+		account_type_no = atoi(account_type);
+	}
+
 	free(account_type);
 	account_type = NULL;
 	return account_type_no;
@@ -78,13 +83,13 @@ int handle_bal_enquiry(int numbytes, int new_fd, acc_node_t *acc_bal_list, user_
 	if(is_match){
 		if (send(new_fd, temp_list->account_detail->close_bal, DATA_BUF_SIZE * sizeof(char), 0) == -1){
 			perror("send");
-			return FAIL;
+			return -1;
 		}
 
-		return SUCCESS;
+		return 1;
 	}
 	else{
-		return FAIL;
+		return -1;
 	}
 
 }

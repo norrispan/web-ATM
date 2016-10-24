@@ -21,7 +21,7 @@ char *recv_amount(int numbytes, int new_fd, acc_node_t *acc_bal_list, user_t log
 	char *amount = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	if ((numbytes = recv(new_fd, amount, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
 		perror("recv");
-		return FAIL_SIGNAL;
+		strcpy(amount, FAIL_SIGNAL);
 	}
 	return amount;
 }
@@ -30,9 +30,13 @@ int deduction(int numbytes, int new_fd, acc_node_t *acc_bal_list, user_t login_i
 	char *amount;
 	char new_bal_buf[DATA_BUF_SIZE];
 	amount = recv_amount(numbytes, new_fd, acc_bal_list, login_input);
+
 	if(strcmp(amount, FAIL_SIGNAL) == 0){
-		return FAIL;
+		return -1;
 	}
+
+
+
 	bool is_match = false;
 	float new_balance;
 	acc_node_t *temp_list;
@@ -44,35 +48,33 @@ int deduction(int numbytes, int new_fd, acc_node_t *acc_bal_list, user_t login_i
 		}
 	}
 
+	if(atof(amount) > atof(temp_list->account_detail->close_bal) && acc_type == SAVING){
+		is_match = false;
+	}
+	if(atof(amount) > CREDIT_LIMIT + atof(temp_list->account_detail->close_bal) && acc_type == CREDIT){
+		is_match = false;
+	}
 	if(is_match){
+
 		new_balance = atof(temp_list->account_detail->close_bal) - atof(amount);
 		snprintf(new_bal_buf, DATA_BUF_SIZE * sizeof(char), "%f", new_balance);
 		set_precision(new_bal_buf);
 		strcpy(temp_list->account_detail->close_bal, new_bal_buf);
 		//add_record(temp_list->account_detail->acc_no, temp_list->account_detail->acc_no, WITHDRAW, amount, tran_record_list);
-		printf("\n%s  %s  %s  %s\n", temp_list->account_detail->acc_no, temp_list->account_detail->acc_no, WITHDRAW, amount);
+		//printf("\n%s  %s  %s  %s\n", temp_list->account_detail->acc_no, temp_list->account_detail->acc_no, WITHDRAW, amount);
 
 
 		if (send(new_fd, temp_list->account_detail->close_bal, DATA_BUF_SIZE * sizeof(char), 0) == -1){
-			return FAIL;
+			return -1;
 		}
-		return SUCCESS;
+		return 1;
 	}
 	else{
-
-		return FAIL;
+		if (send(new_fd, FAIL_SIGNAL, DATA_BUF_SIZE * sizeof(char), 0) == -1){
+			return -1;
+		}
+		printf("%s", FAIL_SIGNAL);
+		return -1;
 	}
 
-}
-
-int handle_withdraw(int numbytes, int new_fd, acc_node_t *acc_bal_list, user_t login_input, tran_node_t *tran_record_list){
-	int acc_type = 0;
-	if((acc_type = recv_account_type(numbytes, new_fd, login_input)) == FAIL){
-		return FAIL;
-	}
-
-	if(deduction(numbytes, new_fd, acc_bal_list, login_input, acc_type, tran_record_list) == FAIL){
-		return FAIL;
-	}
-	return SUCCESS;
 }
