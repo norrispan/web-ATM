@@ -1,28 +1,39 @@
 #define _GNU_SOURCE
-#include <stdio.h>      
-#include <stdlib.h> 
+#include <stdio.h>
+#include <stdlib.h>
 #include "data.h"
 #include "c_basic_h.h"
 #include "c_balance_h.h"
-/* 
+/*
 
-	Author: PAN Ningyuan 
-	Date: September 2016 
+	Author: PAN Ningyuan
+	Date: September 2016
 
 */
+int sockfd, numbytes;
+
+
+
+void signal_handler(int signal){
+	if(signal == SIGINT){
+		close(sockfd);
+		printf("\nexit");
+		exit(0);
+	}
+}
 
 
 
 int main(int argc, char *argv[]){
-	
-	int sockfd, numbytes;  
-	struct hostent *he;
-	struct sockaddr_in their_addr; 
 
-	
+
+	struct hostent *he;
+	struct sockaddr_in their_addr;
+
+
 	user_t my_login;
 	acc_t my_bal;
-	
+
 	my_login.username = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	my_login.pin = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	my_login.client_no = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
@@ -33,8 +44,8 @@ int main(int argc, char *argv[]){
 	}
 	my_bal.open_bal = (char *)malloc(LINE_BUF_SIZE * sizeof(char));
 	my_bal.close_bal = (char *)malloc(LINE_BUF_SIZE * sizeof(char));
-	
-	
+
+
 	if (argc != 3) {
 		fprintf(stderr,"usage: client hostname\n");
 		exit(1);
@@ -60,9 +71,9 @@ int main(int argc, char *argv[]){
 		exit(1);
 	}
 	client(numbytes, sockfd, my_login, my_bal);
-	
-	
-	
+
+
+
 
 	return 0;
 }

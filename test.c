@@ -19,42 +19,22 @@
 
 
 
-typedef struct data data_t;
-struct data{
-	char* a;
-	int b;
-};
 
 
-
-typedef struct node node_t;
-struct node{
-	data_t* sth;
-	node_t* next;
-};
-void change(node_t* some){
-	node_t* temp;
-	temp = some;
-	temp->sth = some->sth;
-	temp->sth->a = some->sth->a;
-	temp->sth->a = "i love u";
-	//strcpy(temp->sth->a, "i love u");
-	//printf("\n%s\n", temp->sth->a);
-}
-
-int main(){
-	node_t* a = malloc(sizeof(node_t));
-	node_t* b = malloc(sizeof(node_t));
-	a->next = b;
-	a->sth = malloc(sizeof(data_t));
-	b->sth = malloc(sizeof(data_t));
-	a->sth->a = malloc(10 * sizeof(char));
-	a->sth->a = "wtf";
-	b->sth->a = malloc(10 * sizeof(char));
-	b->sth->a ="hey";
-
-	change(a);
-	printf("\n%s\n", a->sth->a);
-
-	return 0;
+int main(void)
+{
+    char input[16]="abc,d";
+    char*p;
+    /*strtok places a NULL terminator
+    infront of the token,if found*/
+    p=strtok(input,",");
+    if(p)
+        printf("%s\n",p);
+        /*Asecond call to strtok using a NULL
+        as the first parameter returns a pointer
+        to the character following the token*/
+    p=strtok(NULL,",");
+    if(p)
+        printf("%s\n",p);
+    return 0;
 }

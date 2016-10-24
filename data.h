@@ -35,8 +35,11 @@
 #define FAIL -1
 #define SUCCESS 1
 
-#define FAIL_SIGNAL "f"
-#define SUCCESS_SIGNAL "s"
+#define FAIL_SIGNAL "F"
+#define SUCCESS_SIGNAL "S"
+#define MENU_SIGNAL "M"
+
+#define EXIT_SIGNAL "E"
 
 #define DOT 46
 #define ZERO 48

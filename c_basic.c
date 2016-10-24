@@ -108,14 +108,19 @@ int option_select(){
 	return selection;
 }
 
-void send_menu_select(int selection, int sockfd){
-	char *select_buf = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+int send_menu_select(int selection, int sockfd){
+	char select_buf[DATA_BUF_SIZE];
 	snprintf(select_buf, DATA_BUF_SIZE, "%d", selection);
+	printf("\n%s\n", select_buf);
+
+	strcat(select_buf, ",");
+	strcat(select_buf, MENU_SIGNAL);
+	printf("\n%s\n", select_buf);
 	if (send(sockfd, select_buf, DATA_BUF_SIZE * sizeof(char), 0) == -1){
 		perror("send");
+		return FAIL;
 	}
-	free(select_buf);
-	select_buf = NULL;
+	return SUCCESS;
 }
 
 void exit_client(){

@@ -129,13 +129,15 @@ int authentication(pthread_mutex_t *p_mutex, int numbytes, int new_fd, user_node
 	user_node_t *auth_list;
 	user_node_t *temp;
 	int lock;
-	if ((numbytes = recv(new_fd, login_input.username, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
+	if ((numbytes = recv(new_fd, login_input.username, DATA_BUF_SIZE * sizeof(char), 0)) == FAIL){
+		perror("recv username");
 		close(new_fd);
-		return -1;
+		return FAIL;
 	}
-	if ((numbytes = recv(new_fd, login_input.pin, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
+	if ((numbytes = recv(new_fd, login_input.pin, DATA_BUF_SIZE * sizeof(char), 0)) == FAIL){
+		perror("recv pin");
 		close(new_fd);
-		return -1;
+		return FAIL;
 	}
 	auth_list = user_login_list;
 	for( ; auth_list != NULL; auth_list = auth_list->next) {
@@ -157,103 +159,115 @@ int authentication(pthread_mutex_t *p_mutex, int numbytes, int new_fd, user_node
 	}
 
 	if(valid){
-		if (send(new_fd, auth_list->login->client_no, DATA_BUF_SIZE * sizeof(char), 0) == -1){
+		if (send(new_fd, auth_list->login->client_no, DATA_BUF_SIZE * sizeof(char), 0) == FAIL){
 			close(new_fd);
-			return -1;
+			return FAIL;
 		}
-		if (send(new_fd, auth_list->login->first_name, DATA_BUF_SIZE * sizeof(char), 0) == -1){
+		if (send(new_fd, auth_list->login->first_name, DATA_BUF_SIZE * sizeof(char), 0) == FAIL){
 			close(new_fd);
-			return -1;
+			return FAIL;
 		}
-		if (send(new_fd, auth_list->login->last_name, DATA_BUF_SIZE * sizeof(char), 0) == -1){
+		if (send(new_fd, auth_list->login->last_name, DATA_BUF_SIZE * sizeof(char), 0) == FAIL){
 			close(new_fd);
-			return -1;
+			return FAIL;
 		}
 		for(int i = 0; i < ACCOUNT_TYPE_NUM; i++){
-			if (send(new_fd, auth_list->login->accounts[i], DATA_BUF_SIZE * sizeof(char), 0) == -1){
-				close(new_fd);
-				//lock = pthread_mutex_lock(p_mutex);
-				//auth_list->login->status == false;
-				//login_input.status = false;
-				//lock = pthread_mutex_unlock(p_mutex);
-				return -1;
+			if (send(new_fd, auth_list->login->accounts[i], DATA_BUF_SIZE * sizeof(char), 0) == FAIL){
+				return FAIL;
 			}
 		}
 		return 1;
 
 	}
 	else{
-		if (send(new_fd, FAIL_SIGNAL, DATA_BUF_SIZE * sizeof(char), 0) == -1){
-
+		if (send(new_fd, FAIL_SIGNAL, DATA_BUF_SIZE * sizeof(char), 0) == FAIL){
+			close(new_fd);
+			return FAIL;
 		}
+
 		close(new_fd);
-		//lock = pthread_mutex_lock(p_mutex);
-		//auth_list->login->status == false;
-		//	login_input.status = false;
-		//lock = pthread_mutex_unlock(p_mutex);
-		return -1;
+		return FAIL;
 	}
 
 }
 
 int recv_selection(int numbytes, int new_fd){
-	char *select_buf = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
+	char select_buf[DATA_BUF_SIZE];
 	if ((numbytes = recv(new_fd, select_buf, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
+		printf("not success");
 		perror("recv");
-		return -1;
+		return FAIL;
 	}
-	int selection = atoi(select_buf);
-	free(select_buf);
-	select_buf = NULL;
-	return selection;
+	bool invalid = true;
+	 // 49 is the ascii code for 1 and 54 means 6
+	if(select_buf[0] >= 49 && select_buf[0] <=54 && select_buf[1] == ',' && select_buf[2] == 'M'){
+		invalid = false;
+	}
+	if(invalid){
+		return FAIL;
+	}
+	char *temp;
+	bool correct = false;
+    temp = strtok(select_buf,",");
+	int selection = atoi(temp);
+	temp = strtok(NULL,",");
+	if(strcmp(temp, MENU_SIGNAL) == 0){
+		correct = true;
+	}
+	if(correct){
+		return selection;
+	}
+	else{
+		return FAIL;
+	}
 }
 
 void handle_client(thread_data_t *thr_data){
 	bool online = false;
 	int selection;
 	int acc_type;
-	if(authentication(thr_data->data_mutex, thr_data->numbytes, thr_data->new_fd, thr_data->user_login_list, thr_data->login_input)){
+	if(authentication(thr_data->data_mutex, thr_data->numbytes, thr_data->new_fd, thr_data->user_login_list, thr_data->login_input) != FAIL){
 		online = true;
 	}
 	if(online){
 		selection = 0;
 		selection = recv_selection(thr_data->numbytes, thr_data->new_fd);
 		switch (selection){
-			case -1:
+			case FAIL:
+				printf("\nmenu fail\n");
 				break;
 			case 1:
-				selection = -1;
-				acc_type = -1;
+				acc_type = FAIL;
 				acc_type = recv_account_type(thr_data->numbytes, thr_data->new_fd, thr_data->login_input);
-				printf("\nacc%d\n", acc_type);
-				if(acc_type == -1){
+
+				if(acc_type == FAIL){
 					break;
 				}
-				if(handle_bal_enquiry(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, acc_type) == -1){
+				if(handle_bal_enquiry(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, acc_type) == FAIL){
 					break;
 				}
 				break;
 			case 2:
-				selection = -1;
-				acc_type = -1;
+
+				acc_type = FAIL;
 				acc_type = recv_account_type(thr_data->numbytes, thr_data->new_fd, thr_data->login_input);
-				printf("\nacc%d\n", acc_type);
-				if(acc_type == -1){
+
+				if(acc_type == FAIL){
 					break;
 				}
-				if(deduction(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, acc_type, thr_data->tran_record_list) == -1){
+				if(deduction(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, acc_type, thr_data->tran_record_list) == FAIL){
 					break;
 				}
 				break;
 			case 3:
-				selection = -1;
-				acc_type = -1;
+				selection = FAIL;
+				acc_type = FAIL;
 				acc_type = recv_account_type(thr_data->numbytes, thr_data->new_fd, thr_data->login_input);
-				printf("\nacc%d\n", acc_type);
-				if(acc_type == -1){
+
+				if(acc_type == FAIL){
 					break;
 				}
-				if(make_deposit(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, acc_type, thr_data->tran_record_list) == -1){
+				if(make_deposit(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, acc_type, thr_data->tran_record_list) == FAIL){
 					break;
 				}
 				break;
