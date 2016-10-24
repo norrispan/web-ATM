@@ -16,27 +16,47 @@ void set_precision(char str[]){
 	}
 }
 
-
 char *recv_amount(int numbytes, int new_fd, acc_node_t *acc_bal_list, user_t login_input){
 	char *amount = (char *)malloc(DATA_BUF_SIZE * sizeof(char));
 	if ((numbytes = recv(new_fd, amount, DATA_BUF_SIZE * sizeof(char), 0)) == -1){
 		return FAIL_SIGNAL;
 	}
-	printf("\n%s   %d  %c   %c\n", amount, strlen(amount), amount[strlen(amount)], amount[strlen(amount) - 1]);
-	return amount;
+	bool uncorrect = true;
+	if(amount[strlen(amount)-2] == ',' && amount[strlen(amount) - 1] == '$'){
+		uncorrect = false;
+	}
+	char *temp;
+	temp = strtok(amount,",");
+	bool invalid = false;
+	for(int i = 0; i < strlen(temp); i++){
+		if(*(temp + i) >= ZERO && *(temp + i) <= NINE || *(temp + i) == DOT){
+
+		}
+		else{
+			invalid = true;
+			break;
+		}
+	}
+	if(invalid || uncorrect){
+		return FAIL_SIGNAL;
+	}
+	return temp;
 }
 
 int handle_withdraw(int numbytes, int new_fd, acc_node_t *acc_bal_list, user_t login_input, tran_node_t *tran_record_list){
 	char *amount;
 	char new_bal_buf[DATA_BUF_SIZE];
 	int acc_type;
-	if(acc_type = recv_account_type(numbytes, new_fd, login_input) == FAIL){
-		printf("\nacc fail\n");
+	acc_type = recv_account_type(numbytes, new_fd, login_input);
+	if(acc_type == FAIL){
 		return FAIL;
 	}
 	amount = recv_amount(numbytes, new_fd, acc_bal_list, login_input);
-
-
+	if(strcmp(amount, FAIL_SIGNAL) == 0){
+		return FAIL;
+	}
+	printf("\n%d\n", acc_type);
+	printf("\n%s\n", amount);
 	bool is_match = false;
 	float new_balance;
 	acc_node_t *temp_list;
@@ -62,8 +82,6 @@ int handle_withdraw(int numbytes, int new_fd, acc_node_t *acc_bal_list, user_t l
 		strcpy(temp_list->account_detail.close_bal, new_bal_buf);
 		//add_record(temp_list->account_detail->acc_no, temp_list->account_detail->acc_no, WITHDRAW, amount, tran_record_list);
 		//printf("\n%s  %s  %s  %s\n", temp_list->account_detail->acc_no, temp_list->account_detail->acc_no, WITHDRAW, amount);
-
-
 		if (send(new_fd, temp_list->account_detail.close_bal, DATA_BUF_SIZE * sizeof(char), 0) == -1){
 			return -1;
 		}
