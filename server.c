@@ -6,6 +6,7 @@
 #include "s_balance_h.h"
 #include "s_withdraw_h.h"
 #include "s_deposit_h.h"
+#include "s_transfer_h.h"
 #include "s_record_h.h"
 /*
 
@@ -82,6 +83,76 @@ request_t* get_request(pthread_mutex_t* p_mutex){
     rc = pthread_mutex_unlock(p_mutex);
 
     return a_request;
+
+}
+
+
+void handle_client(thread_data_t *thr_data){
+	bool online = false;
+	int selection;
+	char *amount;
+	int acc_type;
+	if(authentication(thr_data->numbytes, thr_data->new_fd, thr_data->user_login_list, thr_data->login_input) != FAIL){
+		online = true;
+	}
+	if(online){
+		selection = 0;
+		selection = recv_selection(thr_data->numbytes, thr_data->new_fd);
+		switch (selection){
+			case FAIL:
+				break;
+			case 1:
+				if(handle_bal_enquiry(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input) == FAIL){
+					printf("\nbal fail\n");
+					break;
+				}
+				break;
+			case 2:
+
+				acc_type = recv_account_type(thr_data->numbytes, thr_data->new_fd, thr_data->login_input);
+				if(acc_type == FAIL){
+					break;
+				}
+				amount = recv_amount(thr_data->numbytes, thr_data->new_fd);
+				if(strcmp(amount, FAIL_SIGNAL) == 0){
+					break;
+				}
+				if(handle_withdraw(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, amount, acc_type) == FAIL){
+					printf("\nw fail\n");
+					break;
+				}
+				add_record(thr_data->login_input.accounts[acc_type], thr_data->login_input.accounts[acc_type], WITHDRAW, amount, thr_data->tran_record_list);
+				break;
+			case 3:
+				acc_type = recv_account_type(thr_data->numbytes, thr_data->new_fd, thr_data->login_input);
+				if(acc_type == FAIL){
+					break;
+				}
+				amount = recv_amount(thr_data->numbytes, thr_data->new_fd);
+				if(strcmp(amount, FAIL_SIGNAL) == 0){
+					break;
+				}
+				if(handle_deposit(thr_data->numbytes, thr_data->new_fd, thr_data->acc_bal_list, thr_data->login_input, amount, acc_type) == FAIL){
+					break;
+				}
+				add_record(thr_data->login_input.accounts[acc_type], thr_data->login_input.accounts[acc_type], DEPOSIT, amount, thr_data->tran_record_list);
+				break;
+			case 4:
+				if(handle_transfer(thr_data->numbytes, thr_data->new_fd, thr_data->login_input, thr_data->acc_bal_list, thr_data->tran_record_list) == FAIL){
+					break;
+				}
+			case 5:
+				break;
+			case 6:
+				close(thr_data->new_fd);
+			break;
+		}
+
+	}
+	acc_node_t *temp_list;
+	temp_list = thr_data->acc_bal_list;
+	printf("\nclient exit\n");
+
 
 }
 

@@ -23,7 +23,7 @@ tran_node_t *add_record(char *from, char *to, char *type, char *amount, tran_nod
 tran_node_t *get_record(){
     tran_node_t *tran_record_list = NULL;
 	char* line = (char*)malloc(LINE_BUF_SIZE * sizeof(char));
-	FILE* file = fopen("Transactions.txt","r");
+	FILE* file = fopen("./data/Transactions.txt","r");
 	if(!file){
 		printf("can't open file\n");
 	}
